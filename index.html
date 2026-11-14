@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RR SupeRR Selector S2 · Round 1 · Most Reliable Players Under Pressure</title>
+<meta name="description" content="Data-driven ranking of the most reliable IPL/T20I batters and bowlers under pressure, for Rajasthan Royals SupeRR Selector Season 2, Round 1.">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--pink:#E11D48;--blue:#2541B2;--navy:#0F172A;--muted:#64748B;--bg:#F5F7FB;--card:#fff;--line:#E2E8F0;--teal:#0D9488;--gold:#F59E0B}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--navy);line-height:1.45}
+header{background:linear-gradient(120deg,var(--blue) 0%,#3B1E8F 55%,var(--pink) 100%);color:#fff;padding:34px 20px 28px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+header .kicker{letter-spacing:.18em;font-size:12px;font-weight:700;opacity:.85;text-transform:uppercase}
+header h1{margin:6px 0 8px;font-size:clamp(22px,3.6vw,34px);line-height:1.15}
+header p{margin:0;max-width:900px;opacity:.95}
+nav{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto;padding:8px 16px}
+nav a{white-space:nowrap;text-decoration:none;color:var(--blue);font-weight:600;font-size:14px;padding:6px 10px;border-radius:999px}
+nav a:hover{background:#EEF2FF}
+section{margin:22px auto}
+h2{font-size:21px;margin:0 0 12px;color:var(--blue)}h2 span{color:var(--pink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.kpi{background:#fff;border:1px solid var(--line);border-left:5px solid var(--pink);border-radius:12px;padding:14px}
+.kpi:nth-child(2){border-left-color:var(--blue)}.kpi:nth-child(3){border-left-color:var(--teal)}.kpi:nth-child(4){border-left-color:var(--gold)}
+.kpi .v{font-size:28px;font-weight:800}.kpi .l{color:var(--muted);font-size:13px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+.chartbox{position:relative;height:320px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--blue);color:#fff;cursor:pointer;user-select:none;position:sticky;top:0;white-space:nowrap}
+th.sorted-asc::after{content:" ▲";font-size:10px}th.sorted-desc::after{content:" ▼";font-size:10px}
+.bowl th{background:var(--pink)}
+tbody tr:nth-child(even){background:#F8FAFC}tbody tr:hover{background:#EEF2FF}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tablewrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line)}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.p-ret{background:#FEF3C7;color:#92400E}.p-unr{background:#E2E8F0;color:#334155}.p-other{background:#FCE7F3;color:#9D174D}
+.note{color:var(--muted);font-size:12px}
+.pos{color:#047857;font-weight:700}.neg{color:#B91C1C;font-weight:700}
+.fit{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.fit .card h3{margin:0 0 4px;font-size:15px;color:var(--pink)}.fit .card .pick{font-weight:800;margin-bottom:6px}
+ul{padding-left:20px;margin:6px 0}li{margin:3px 0}
+code{background:#EEF2FF;padding:1px 5px;border-radius:5px;font-size:12.5px}
+footer{color:var(--muted);font-size:12.5px;padding:26px 16px 40px;text-align:center}
+.toggle{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}.toggle button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;cursor:pointer;color:var(--blue)}
+.toggle button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="kicker">Rajasthan Royals · SupeRR Selector Season 2 · Round 1</div>
+  <h1>Rajasthan Royals — SupeRR Selector S2, Round 1: Most Reliable Players Under Pressure</h1>
+  <p id="def"></p>
+</div></header>
+<nav><div class="wrap">
+  <a href="#validation">Validation</a><a href="#batters">Top 10 batters</a><a href="#bowlers">Top 10 bowlers</a>
+  <a href="#charts">Pressure vs baseline</a><a href="#rr">RR fit</a><a href="#method">Methodology</a>
+</div></nav>
+<main class="wrap">
+
+<section id="validation">
+  <h2>Does the pressure index capture real pressure? <span>Yes.</span></h2>
+  <div class="kpis" id="kpis"></div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="card"><b>Wickets per 100 legal balls, by pressure decile</b><div class="note">Decile 1 = calmest, 10 = most pressure. Line = dot-ball %.</div><div class="chartbox"><canvas id="cDec"></canvas></div></div>
+    <div class="card"><b>Chasing side win %, by share of the chase spent under high pressure</b><div class="note">Completed chases split into four equal groups (quartiles).</div><div class="chartbox"><canvas id="cOc"></canvas></div></div>
+  </div>
+  <p class="note" id="valnote"></p>
+</section>
+
+<section id="batters">
+  <h2>Top 10 batters under pressure</h2>
+  <p class="note">Click a column header to sort. HP = high-pressure balls (top 25% of the Pressure Index). Baseline = the player's own non-pressure balls. Lift is shrunk pressure SR minus baseline SR (baseline floored at 120). Consistency = % of pressure innings with a positive contribution.</p>
+  <div class="tablewrap"><table id="tBat"></table></div>
+</section>
+
+<section id="bowlers">
+  <h2>Top 10 bowlers under pressure</h2>
+  <p class="note">Lift = baseline economy (capped at 9.5) minus pressure economy; positive is better. Wickets are bowler wickets only (run-outs excluded). Tim Southee scored 5th but is excluded because he is KKR's bowling coach. Everyone below moved up one place, and Harpreet Brar is No. 10.</p>
+  <div class="tablewrap bowl"><table id="tBowl"></table></div>
+</section>
+
+<section id="charts">
+  <h2>Pressure performance vs own baseline</h2>
+  <div class="grid2">
+    <div class="card"><b>Top 10 batters: strike rate</b><div class="note">Shrunk toward the population mean to dampen small samples.</div><div class="chartbox" style="height:380px"><canvas id="cBat"></canvas></div></div>
+    <div class="card"><b>Top 10 bowlers: economy rate</b><div class="note">Lower is better. Shrunk toward the population mean.</div><div class="chartbox" style="height:380px"><canvas id="cBowl"></canvas></div></div>
+  </div>
+</section>
+
+<section id="rr">
+  <h2>How the picks strengthen RR</h2>
+  <p class="note">RR's needs come from public reporting on the 2026 season (sources on each card). Pressure stats are from this analysis, split by phase.</p>
+  <div class="fit" id="fit"></div>
+</section>
+
+<section id="method">
+  <h2>Methodology in brief</h2>
+  <div class="grid2">
+    <div class="card"><b>Pressure Index (0–1, every ball)</b><ul>
+      <li><b>Chase difficulty (0.50):</b> required run rate vs a par of 8.5, plus how few wickets and balls are left. Uses DLS-revised targets where present.</li>
+      <li><b>Death overs (0.25):</b> overs 16–20, with partial weight for overs 14–15.</li>
+      <li><b>Collapse (0.15):</b> wickets in the last 12 balls and few wickets in hand.</li>
+      <li><b>Chase × death interaction (0.10)</b>, plus a <b>+0.18 boost for knockout matches</b>.</li>
+      <li>A ball is <b>high-pressure</b> if its index is in the top 25% (≥ <span id="thr"></span>).</li></ul>
+      <b>Data checks</b><ul><li><code>runs</code> is runs off the bat only. A ball's total is <code>runs + extras1_runs + extras_2_runs</code>. Rebuilt scores match 397 of 400 non-DLS results.</li>
+      <li>Bowler wickets count Caught, Bowled, LBW, Stumped and Hit Wicket. Run-outs, retirements and obstructing the field are excluded.</li></ul></div>
+    <div class="card"><b>Scoring</b><ul id="weights"></ul>
+      <ul><li>Rates are shrunk toward the population mean using a prior worth 50 balls (empirical Bayes), so small samples can't top the list.</li>
+      <li>Phase-adjusted: runs above or below the league average for that innings and over, among high-pressure balls.</li>
+      <li>IPL balls are weighted ×1.35, Full-Member T20I balls ×1.00 and other T20 balls ×0.70.</li></ul>
+      <b>Eligibility</b><ul id="elig"></ul></div>
+  </div>
+  <p class="note">This dashboard mirrors the methodology report submitted as a PDF (<a href="RR_SupeRR_Selector_Round1_Report.pdf">download the PDF</a>). Every number comes from the same pipeline and output CSVs (<a href="batter_rankings.csv">batter_rankings.csv</a>, <a href="bowler_rankings.csv">bowler_rankings.csv</a>). Data: IPL 2022–2026 and T20Is from 2022, from the official data pack. Availability notes reflect public reporting as of 14 Nov 2026, before the 17 Nov retention deadline.</p>
+</section>
+</main>
+<footer>RR SupeRR Selector Season 2 · Round 1 submission · Static page with no tracking, no login and no data collection.</footer>
+
+<script>
+const D = {"bat": [{"rank": 1, "player": "Reeza Hendricks", "team": "South Africa", "hp_balls": 241, "hp": 188.4, "base": 129.6, "lift": 50.8, "bpd": 34.4, "consist": 67, "score": 2.485, "status": "Status unreported", "note": "Not in an IPL 2026 squad in the data pack; would enter only via auction registration (closes 23 Nov 2026). No public report found.", "src": "Cricinfo 2026-11-02/03 (retention deadline 17 Nov; registration 23 Nov)", "hp_shr": 182.1, "base_shr": 131.4}, {"rank": 2, "player": "Shreyas Iyer", "team": "Punjab Kings (IPL 2026)", "hp_balls": 452, "hp": 186.4, "base": 142.9, "lift": 39.8, "bpd": 30.0, "consist": 70, "score": 1.995, "status": "Likely retained (unconfirmed)", "note": "PBKS; listed among PBKS likely retentions. Official lists due 17 Nov 2026. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026); Sportstar trade list 2026-11-11", "hp_shr": 183.0, "base_shr": 143.3}, {"rank": 3, "player": "William Jacks", "team": "Mumbai Indians (IPL 2026)", "hp_balls": 130, "hp": 191.7, "base": 141.3, "lift": 38.6, "bpd": 20.6, "consist": 55, "score": 1.363, "status": "Status unreported", "note": "MI (IPL 2026 per data). Not in any confirmed trade; no public retention report found.", "src": "Sportstar trade list 2026-11-11", "hp_shr": 180.7, "base_shr": 142.1}, {"rank": 4, "player": "Shubham Dubey", "team": "Rajasthan Royals (IPL 2026)", "hp_balls": 92, "hp": 182.6, "base": 102.0, "lift": 45.1, "bpd": 18.4, "consist": 60, "score": 1.318, "status": "Status unreported", "note": "RR (IPL 2026 per data) - already an RR player. Not in any confirmed trade.", "src": "Sportstar trade list 2026-11-11", "hp_shr": 171.8, "base_shr": 126.7}, {"rank": 5, "player": "Jos Buttler", "team": "Gujarat Titans (IPL 2026)", "hp_balls": 393, "hp": 177.3, "base": 150.3, "lift": 24.0, "bpd": 27.7, "consist": 62, "score": 1.294, "status": "Likely retained (unconfirmed)", "note": "GT; listed among GT likely retentions. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026)", "hp_shr": 174.4, "base_shr": 150.4}, {"rank": 6, "player": "Naman Dhir", "team": "Mumbai Indians (IPL 2026)", "hp_balls": 179, "hp": 196.8, "base": 155.8, "lift": 31.6, "bpd": 13.7, "consist": 62, "score": 1.288, "status": "Likely retained (unconfirmed)", "note": "MI; listed among MI likely retentions. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026)", "hp_shr": 187.0, "base_shr": 155.4}, {"rank": 7, "player": "Sameer Rizvi", "team": "Delhi Capitals (IPL 2026)", "hp_balls": 121, "hp": 170.2, "base": 126.7, "lift": 32.5, "bpd": 20.2, "consist": 71, "score": 1.198, "status": "Likely retained (unconfirmed)", "note": "DC; listed among DC likely retentions. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026)", "hp_shr": 164.9, "base_shr": 132.4}, {"rank": 8, "player": "Shashank Singh", "team": "Punjab Kings (IPL 2026)", "hp_balls": 301, "hp": 175.1, "base": 145.9, "lift": 24.9, "bpd": 27.4, "consist": 57, "score": 1.181, "status": "Likely retained (unconfirmed)", "note": "PBKS; listed among PBKS likely retentions. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026)", "hp_shr": 171.8, "base_shr": 146.9}, {"rank": 9, "player": "Rinku Singh", "team": "Kolkata Knight Riders (IPL 2026)", "hp_balls": 377, "hp": 164.3, "base": 146.8, "lift": 15.8, "bpd": 37.1, "consist": 57, "score": 1.172, "status": "Likely retained (unconfirmed)", "note": "KKR; listed among KKR likely retentions. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026)", "hp_shr": 162.9, "base_shr": 147.1}, {"rank": 10, "player": "Sai Sudharsan", "team": "Gujarat Titans (IPL 2026)", "hp_balls": 366, "hp": 176.2, "base": 141.7, "lift": 31.3, "bpd": 19.3, "consist": 50, "score": 1.133, "status": "Likely retained (unconfirmed)", "note": "GT; listed among GT likely retentions. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026)", "hp_shr": 173.3, "base_shr": 142.0}], "bowl": [{"rank": 1, "player": "Corbin Bosch", "team": "Mumbai Indians (IPL 2026)", "hp_balls": 135, "hp": 6.64, "base": 10.02, "lift": 2.13, "wkts": 15, "consist": 100, "score": 2.904, "status": "Status unreported", "note": "MI (IPL 2026 per data). Not in any confirmed trade; no public retention report found.", "src": "Sportstar trade list 2026-11-11", "hp_shr": 7.37, "base_shr": 9.9}, {"rank": 2, "player": "Mitchell Santner", "team": "Mumbai Indians (IPL 2026)", "hp_balls": 523, "hp": 7.21, "base": 7.7, "lift": 0.37, "wkts": 40, "consist": 82, "score": 1.476, "status": "Likely retained (unconfirmed)", "note": "MI; listed among MI likely retentions. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026)", "hp_shr": 7.39, "base_shr": 7.76}, {"rank": 3, "player": "Barry McCarthy", "team": "Ireland", "hp_balls": 130, "hp": 7.8, "base": 9.11, "lift": 0.9, "wkts": 10, "consist": 75, "score": 1.439, "status": "Status unreported", "note": "Ireland; no IPL squad in the data pack. Auction entry would require registration. No public report found.", "src": "Cricinfo (registration closes 23 Nov 2026)", "hp_shr": 8.23, "base_shr": 9.13}, {"rank": 4, "player": "Matthew Humphreys", "team": "Ireland", "hp_balls": 104, "hp": 7.04, "base": 7.28, "lift": -0.09, "wkts": 13, "consist": 67, "score": 1.335, "status": "Status unreported", "note": "Ireland; no IPL squad in the data pack. Auction entry would require registration. No public report found.", "src": "Cricinfo (registration closes 23 Nov 2026)", "hp_shr": 7.79, "base_shr": 7.7}, {"rank": 5, "player": "Mujeeb Ur Rahman", "team": "Mumbai Indians (IPL 2025)", "hp_balls": 175, "hp": 7.23, "base": 7.23, "lift": -0.33, "wkts": 14, "consist": 82, "score": 1.215, "status": "Status unreported", "note": "Last IPL team in data: MI (2025). No public retention/trade report found.", "src": "Sportstar trade list 2026-11-11", "hp_shr": 7.71, "base_shr": 7.38}, {"rank": 6, "player": "Mohit Sharma", "team": "Delhi Capitals (IPL 2025)", "hp_balls": 257, "hp": 8.75, "base": 10.21, "lift": 0.65, "wkts": 27, "consist": 80, "score": 1.077, "status": "Status unreported", "note": "Last IPL team in data: DC (2025). No public retention/trade report found.", "src": "Sportstar trade list 2026-11-11", "hp_shr": 8.85, "base_shr": 10.12}, {"rank": 7, "player": "Gudakesh Motie", "team": "West Indies", "hp_balls": 168, "hp": 7.71, "base": 8.63, "lift": 0.6, "wkts": 12, "consist": 69, "score": 1.067, "status": "Status unreported", "note": "West Indies; no IPL squad in the data pack. No public report found.", "src": "Cricinfo (registration closes 23 Nov 2026)", "hp_shr": 8.09, "base_shr": 8.69}, {"rank": 8, "player": "Sunil Narine", "team": "Kolkata Knight Riders (IPL 2026)", "hp_balls": 426, "hp": 7.0, "base": 7.0, "lift": -0.14, "wkts": 22, "consist": 83, "score": 1.067, "status": "Likely retained (unconfirmed)", "note": "KKR; listed among KKR likely retentions. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026)", "hp_shr": 7.25, "base_shr": 7.1}, {"rank": 9, "player": "Eshan Malinga", "team": "Sunrisers Hyderabad (IPL 2026)", "hp_balls": 333, "hp": 8.91, "base": 9.54, "lift": 0.53, "wkts": 24, "consist": 83, "score": 1.026, "status": "Likely retained (unconfirmed)", "note": "SRH; listed among SRH likely retentions. Not in any confirmed trade.", "src": "Sporting News IPL 2027 retentions tracker (Nov 2026)", "hp_shr": 8.97, "base_shr": 9.53}, {"rank": 10, "player": "Harpreet Brar", "team": "Punjab Kings (IPL 2026)", "hp_balls": 138, "hp": 7.57, "base": 8.51, "lift": 0.54, "wkts": 8, "consist": 80, "score": 0.997, "status": "Likely retained (unconfirmed)", "note": "PBKS (IPL 2026 per data); Indian player in an active IPL squad. Listed on predicted PBKS retention lists; official list due 17 Nov 2026. Not in any confirmed trade.", "src": "CricketNews.com / CricPanda PBKS IPL 2027 retention previews (Nov 2026); Sportstar trade list 2026-11-11", "hp_shr": 8.04, "base_shr": 8.59}], "val": {"wkt_hp": 6.83, "wkt_n": 5.23, "wkt_up": 30, "bpw_hp": 14.6, "bpw_n": 19.1, "death_rr_n": 10.49, "death_rr_hp": 9.75, "death_sr_n": 164.5, "death_sr_hp": 152.7, "chase_lo": 94.8, "chase_hi": 15.2, "dec_wkt": [4.56, 4.89, 4.24, 4.66, 4.8, 6.77, 6.92, 4.95, 5.98, 8.63], "dec_dot": [41.2, 33.6, 36.4, 38.0, 37.3, 28.9, 36.1, 34.7, 32.2, 33.5], "oc_labels": ["Q1 (least)", "Q2", "Q3", "Q4 (most)"], "oc_vals": [94.8, 65.7, 24.8, 15.2], "spearman": 0.81, "thr": 0.292}, "fit": [{"need": "An Indian death-overs bowler", "pick": "Mohit Sharma (bowler #6)", "stat": "Death overs under pressure: 122 balls, economy 8.66, 14 wickets", "src": "Sports Yaari RR report card, 31 May 2026; Sandeep Sharma went at 11.39 (Hindustan Times, 12 Nov 2026)"}, {"need": "An overseas all-rounder who can bowl at the death", "pick": "Corbin Bosch (bowler #1)", "stat": "Death overs under pressure: 61 balls, economy 5.61, 11 wickets; positive in 100% of pressure spells", "src": "Sports Yaari RR report card, 31 May 2026"}, {"need": "Middle-overs control (RR economy in overs 7-11 was 9.71, second-worst)", "pick": "Mitchell Santner (bowler #2)", "stat": "Overs 7-11 under pressure: 233 balls, economy 6.93, 20 wickets", "src": "Hindustan Times, 12 Nov 2026; The Hindu, 25 May 2026 (spin a concern)"}, {"need": "A reliable finisher (RR death-overs scoring rate 10.62, 7th)", "pick": "Shubham Dubey (#4, already at RR) / Rinku Singh (#9)", "stat": "Death overs under pressure: Dubey SR 210.9 on 55 balls; Rinku SR 211.3 on 195 balls, 3 dismissals", "src": "Hindustan Times, 12 Nov 2026; Sports Yaari, 31 May 2026"}], "elig": {"min_pressure_balls_bat": 80, "min_pressure_innings_bat": 7, "min_pressure_balls_bowl": 100, "min_pressure_spells_bowl": 8, "min_hp_wickets_bowl": 6, "min_ipl_hp_balls": 40, "min_fullmember_t20i_hp_balls": 100, "n_eligible_batters": 122, "n_eligible_bowlers": 111, "n_excluded_nation_bat": 15, "n_excluded_nation_bowl": 13}, "w": {"bat": {"lift": 0.3, "abs": 0.35, "survival": 0.15, "consistency": 0.2}, "bowl": {"lift": 0.22, "abs": 0.4, "wickets": 0.18, "consistency": 0.2}}};
+const V = D.val;
+document.getElementById('def').innerHTML = `<b>Pressure, in one line:</b> each ball gets a 0–1 score built from chase difficulty (required rate vs par, wickets and balls left), death overs, collapses and knockouts. The top 25% of balls count as high-pressure. Players are rated on their lift over their own baseline, phase-adjusted output against peers, survival or wickets, and match-to-match consistency. Pakistan and Bangladesh players are excluded because they are not available in the IPL.`;
+document.getElementById('thr').textContent = V.thr;
+const kp = [
+  [`+${V.wkt_up}%`, `more wickets on high-pressure balls (${V.wkt_hp} vs ${V.wkt_n} per 100 balls; a wicket every ${V.bpw_hp} balls instead of ${V.bpw_n})`],
+  [`${V.death_rr_n} → ${V.death_rr_hp}`, `death-over run rate, normal vs high-pressure (SR ${V.death_sr_n} → ${V.death_sr_hp})`],
+  [`${Math.round(V.chase_lo)}% → ${Math.round(V.chase_hi)}%`, `chases won with the least vs the most time under pressure`],
+  [`ρ = ${V.spearman}`, `rank correlation between pressure decile and wicket rate (strong, not perfectly monotonic)`]];
+document.getElementById('kpis').innerHTML = kp.map(k=>`<div class="kpi"><div class="v">${k[0]}</div><div class="l">${k[1]}</div></div>`).join('');
+document.getElementById('valnote').textContent = "Honest caveat: across all phases combined, high-pressure balls are not scored more slowly, because they cluster in the death overs. Within the death overs, pressure clearly suppresses scoring. The chase-outcome check is partly built in (falling behind the rate raises the index), so treat it as supporting evidence.";
+
+function pill(s){const c = /retained/i.test(s)?'p-ret':(/unreported/i.test(s)?'p-unr':'p-other');return `<span class="pill ${c}">${s}</span>`}
+function sgn(v,d,invert){const c=v>=0?'pos':'neg';return `<span class="${c}">${v>=0?'+':''}${v.toFixed(d)}</span>`}
+function makeTable(id, rows, cols){
+  const t=document.getElementById(id); let sortKey='rank', dir=1;
+  function render(){
+    const r=[...rows].sort((a,b)=>{const x=a[sortKey],y=b[sortKey];return (typeof x==='number'?x-y:String(x).localeCompare(String(y)))*dir});
+    t.innerHTML='<thead><tr>'+cols.map(c=>`<th data-k="${c.k}" class="${c.k===sortKey?(dir>0?'sorted-asc':'sorted-desc'):''}">${c.h}</th>`).join('')+'</tr></thead><tbody>'+
+      r.map(x=>'<tr>'+cols.map(c=>`<td class="${c.num?'num':''}">${c.f?c.f(x):x[c.k]}</td>`).join('')+'</tr>').join('')+'</tbody>';
+    t.querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=th.dataset.k; if(k===sortKey) dir=-dir; else {sortKey=k; dir=(k==='rank'||k==='player'||k==='team'||k==='status')?1:-1;} render();});
+  }
+  render();
+}
+const av = {k:'status',h:'Auction availability',f:x=>`${pill(x.status)}<div class="note">${x.note}</div><div class="note"><i>${x.src}</i></div>`};
+makeTable('tBat', D.bat, [
+  {k:'rank',h:'#',num:1},{k:'player',h:'Player',f:x=>`<b>${x.player}</b>`},{k:'team',h:'Team'},
+  {k:'hp_balls',h:'HP balls',num:1},{k:'hp',h:'HP SR',num:1,f:x=>x.hp.toFixed(1)},{k:'base',h:'Baseline SR',num:1,f:x=>x.base.toFixed(1)},
+  {k:'lift',h:'Lift',num:1,f:x=>sgn(x.lift,1)},{k:'bpd',h:'Balls/dismissal',num:1,f:x=>x.bpd.toFixed(1)},
+  {k:'consist',h:'Consistency',num:1,f:x=>x.consist+'%'},{k:'score',h:'Composite',num:1,f:x=>`<b>${x.score.toFixed(3)}</b>`},av]);
+makeTable('tBowl', D.bowl, [
+  {k:'rank',h:'#',num:1},{k:'player',h:'Player',f:x=>`<b>${x.player}</b>`},{k:'team',h:'Team'},
+  {k:'hp_balls',h:'HP balls',num:1},{k:'hp',h:'HP economy',num:1,f:x=>x.hp.toFixed(2)},{k:'base',h:'Baseline econ.',num:1,f:x=>x.base.toFixed(2)},
+  {k:'lift',h:'Lift',num:1,f:x=>sgn(x.lift,2)},{k:'wkts',h:'HP wickets',num:1},
+  {k:'consist',h:'Consistency',num:1,f:x=>x.consist+'%'},{k:'score',h:'Composite',num:1,f:x=>`<b>${x.score.toFixed(3)}</b>`},av]);
+
+document.getElementById('fit').innerHTML = D.fit.map(f=>`<div class="card"><h3>RR need: ${f.need}</h3><div class="pick">${f.pick}</div><div>${f.stat}</div><div class="note" style="margin-top:6px"><i>Source: ${f.src}</i></div></div>`).join('');
+const W=D.w, E=D.elig;
+document.getElementById('weights').innerHTML = `<li><b>Batters:</b> ${W.bat.lift} × lift over own baseline + ${W.bat.abs} × absolute pressure SR and phase-adjusted runs above expected + ${W.bat.survival} × survival (balls per dismissal) + ${W.bat.consistency} × consistency</li>
+ <li><b>Bowlers:</b> ${W.bowl.lift} × lift + ${W.bowl.abs} × absolute economy and phase-adjusted runs saved + ${W.bowl.wickets} × wicket rate + ${W.bowl.consistency} × consistency + 0.05 × dot %</li>`;
+document.getElementById('elig').innerHTML = `<li>Batters: at least ${E.min_pressure_balls_bat} HP balls and ${E.min_pressure_innings_bat} pressure innings. Bowlers: at least ${E.min_pressure_balls_bowl} HP balls, ${E.min_pressure_spells_bowl} spells and ${E.min_hp_wickets_bowl} HP wickets.</li>
+ <li>Auction relevance: at least ${E.min_ipl_hp_balls} IPL HP balls, or at least ${E.min_fullmember_t20i_hp_balls} Full-Member T20I HP balls.</li>
+ <li>Pakistan and Bangladesh players excluded (${E.n_excluded_nation_bat} batters and ${E.n_excluded_nation_bowl} bowlers removed). Players not available as players are excluded too (Tim Southee).</li>
+ <li>Eligible pool: ${E.n_eligible_batters} batters, ${E.n_eligible_bowlers} bowlers.</li>`;
+
+if (window.Chart){
+Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+const pink='#E11D48', blue='#2541B2', grey='#94A3B8';
+new Chart(document.getElementById('cDec'),{data:{labels:[1,2,3,4,5,6,7,8,9,10],datasets:[
+  {type:'bar',label:'Wickets per 100 legal balls',data:V.dec_wkt,backgroundColor:pink,yAxisID:'y'},
+  {type:'line',label:'Dot-ball %',data:V.dec_dot,borderColor:blue,backgroundColor:blue,yAxisID:'y2',tension:.25}]},
+  options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{x:{title:{display:true,text:'Pressure decile'}},
+  y:{title:{display:true,text:'Wickets / 100 balls'},beginAtZero:true},y2:{position:'right',grid:{display:false},title:{display:true,text:'Dot %'}}}}});
+new Chart(document.getElementById('cOc'),{type:'bar',data:{labels:V.oc_labels,datasets:[{label:'Chasing side win %',data:V.oc_vals,backgroundColor:['#0D9488',blue,'#F59E0B',pink]}]},
+  options:{maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'%'}}},scales:{y:{beginAtZero:true,max:100,title:{display:true,text:'Win %'}},x:{title:{display:true,text:'Share of the chase under high pressure'}}}}});
+function dumbbell(id, rows, lab){
+  new Chart(document.getElementById(id),{type:'bar',data:{labels:rows.map(r=>r.rank+'. '+r.player),datasets:[
+    {label:'Baseline',data:rows.map(r=>r.base_shr),backgroundColor:grey},{label:'Under pressure',data:rows.map(r=>r.hp_shr),backgroundColor:id==='cBat'?pink:blue}]},
+    options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{x:{title:{display:true,text:lab},beginAtZero:false}}}});
+}
+dumbbell('cBat', D.bat, 'Strike rate (shrunk)'); dumbbell('cBowl', D.bowl, 'Economy rate (shrunk)');
+}
+</script>
+</body>
+</html>
