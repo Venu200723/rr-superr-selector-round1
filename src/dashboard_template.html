@@ -37,7 +37,7 @@ tbody tr:nth-child(even){background:#F8FAFC}tbody tr:hover{background:#EEF2FF}
 td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .tablewrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line)}
 .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
-.p-ret{background:#FEF3C7;color:#92400E}.p-unr{background:#E2E8F0;color:#334155}.p-other{background:#FCE7F3;color:#9D174D}
+.p-ret{background:#FEF3C7;color:#92400E}.p-rr{background:#D1FAE5;color:#065F46}.p-x{background:#FEE2E2;color:#991B1B}.p-unr{background:#E2E8F0;color:#334155}.p-other{background:#FCE7F3;color:#9D174D}
 .note{color:var(--muted);font-size:12px}
 .pos{color:#047857;font-weight:700}.neg{color:#B91C1C;font-weight:700}
 .fit{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
@@ -57,7 +57,7 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 16px 40px;text-align:cen
 </div></header>
 <nav><div class="wrap">
   <a href="#validation">Validation</a><a href="#batters">Top 10 batters</a><a href="#bowlers">Top 10 bowlers</a>
-  <a href="#charts">Pressure vs baseline</a><a href="#rr">RR fit</a><a href="#method">Methodology</a>
+  <a href="#charts">Pressure vs baseline</a><a href="#auction">2027 mini-auction</a><a href="#rr">RR fit</a><a href="#method">Methodology</a>
 </div></nav>
 <main class="wrap">
 
@@ -79,7 +79,7 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 16px 40px;text-align:cen
 
 <section id="bowlers">
   <h2>Top 10 bowlers under pressure</h2>
-  <p class="note">Lift = baseline economy (capped at 9.5) minus pressure economy; positive is better. Wickets are bowler wickets only (run-outs excluded). Tim Southee scored 5th but is excluded because he is KKR's bowling coach. Everyone below moved up one place, and Harpreet Brar is No. 10.</p>
+  <p class="note">Lift = baseline economy (capped at 9.5) minus pressure economy; positive is better. Wickets are bowler wickets only (run-outs excluded). Two scored players are excluded because they are not available as players: Tim Southee (score rank 5, KKR bowling coach) and Mohit Sharma (score rank 7, retired from all cricket on 3 Dec 2025). Everyone below moved up, and Nitish Reddy (score rank 12) is now No. 10. <b>This changed on 17 Nov 2026.</b></p>
   <div class="tablewrap bowl"><table id="tBowl"></table></div>
 </section>
 
@@ -91,9 +91,25 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 16px 40px;text-align:cen
   </div>
 </section>
 
+<section id="auction">
+  <h2>IPL 2027 mini-auction update <span>(17 Nov 2026 retention lists)</span></h2>
+  <div class="kpis" id="akpis"></div>
+  <p class="note" id="anote"></p>
+  <div class="card" style="margin-top:12px"><b>What happened to our 20 picks</b><div id="apicks"></div></div>
+  <h3 style="margin:18px 0 8px">Prioritised shortlist: available players only</h3>
+  <p class="note">Price bands are our own rough estimates, not reported figures. "Uncontracted" players reach the auction only if they register by 23 Nov; the final list is published on 3 Dec.</p>
+  <div class="tablewrap"><table id="tTg"></table></div>
+  <h3 style="margin:18px 0 8px">Proposed RR playing XI for IPL 2027 (max 4 overseas)</h3>
+  <div class="tablewrap"><table id="tXi"></table></div>
+  <div class="card" style="margin-top:12px"><ul>
+   <li><b>Impact sub:</b> when chasing, Shubham Dubey (our batter #4; SR 210.9 on 55 high-pressure death balls). When defending, Avesh Khan or Brijesh Sharma (88% positive pressure spells). Overseas cover: Burger or Topley for Archer or Pathirana; Rachin Ravindra for Maxwell.</li>
+   <li><b>Bowling plan:</b> Powerplay: Archer 2 and Shami 2–3. Overs 7–15: Bishnoi 4, Jadeja 4 and Maxwell 1–2. Death: Pathirana 3, Archer 2 and Shami 1. Bishnoi stays out of the death (economy 11.33 on high-pressure death balls).</li>
+   <li><b>Retained squad (19):</b> <span id="asq"></span></li></ul></div>
+</section>
+
 <section id="rr">
   <h2>How the picks strengthen RR</h2>
-  <p class="note">RR's needs come from public reporting on the 2026 season (sources on each card). Pressure stats are from this analysis, split by phase.</p>
+  <p class="note">RR's needs come from public reporting on the 2026 season and the 17 Nov 2026 retention lists (sources on each card). Pressure stats come from this analysis, split by phase. Every player named here can actually be signed, or is already at RR.</p>
   <div class="fit" id="fit"></div>
 </section>
 
@@ -114,7 +130,7 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 16px 40px;text-align:cen
       <li>IPL balls are weighted ×1.35, Full-Member T20I balls ×1.00 and other T20 balls ×0.70.</li></ul>
       <b>Eligibility</b><ul id="elig"></ul></div>
   </div>
-  <p class="note">This dashboard mirrors the methodology report submitted as a PDF (<a href="RR_SupeRR_Selector_Round1_Report.pdf">download the PDF</a>). Every number comes from the same pipeline and output CSVs (<a href="batter_rankings.csv">batter_rankings.csv</a>, <a href="bowler_rankings.csv">bowler_rankings.csv</a>). Data: IPL 2022–2026 and T20Is from 2022, from the official data pack. Availability notes reflect public reporting as of 14 Nov 2026, before the 17 Nov retention deadline.</p>
+  <p class="note">This dashboard mirrors the methodology report submitted as a PDF (<a href="RR_SupeRR_Selector_Round1_Report.pdf">download the PDF</a>). Every number comes from the same pipeline and output CSVs (<a href="batter_rankings.csv">batter_rankings.csv</a>, <a href="bowler_rankings.csv">bowler_rankings.csv</a>). Data: IPL 2022–2026 and T20Is from 2022, from the official data pack. Availability reflects the official IPL 2027 retention lists published on 17 Nov 2026 (TOI, News18, CricTracker, Mint, Cricinfo).</p>
 </section>
 </main>
 <footer>RR SupeRR Selector Season 2 · Round 1 submission · Static page with no tracking, no login and no data collection.</footer>
@@ -132,7 +148,7 @@ const kp = [
 document.getElementById('kpis').innerHTML = kp.map(k=>`<div class="kpi"><div class="v">${k[0]}</div><div class="l">${k[1]}</div></div>`).join('');
 document.getElementById('valnote').textContent = "Honest caveat: across all phases combined, high-pressure balls are not scored more slowly, because they cluster in the death overs. Within the death overs, pressure clearly suppresses scoring. The chase-outcome check is partly built in (falling behind the rate raises the index), so treat it as supporting evidence.";
 
-function pill(s){const c = /retained/i.test(s)?'p-ret':(/unreported/i.test(s)?'p-unr':'p-other');return `<span class="pill ${c}">${s}</span>`}
+function pill(s){const c = /^ALREADY RR/.test(s)?'p-rr':(/^RETAINED/.test(s)?'p-ret':(/RETIRED|NOT AVAILABLE/.test(s)?'p-x':(/NOT IN ANY|UNCONTRACTED|unreported/i.test(s)?'p-unr':'p-other')));return `<span class="pill ${c}">${s}</span>`}
 function sgn(v,d,invert){const c=v>=0?'pos':'neg';return `<span class="${c}">${v>=0?'+':''}${v.toFixed(d)}</span>`}
 function makeTable(id, rows, cols){
   const t=document.getElementById(id); let sortKey='rank', dir=1;
@@ -157,12 +173,20 @@ makeTable('tBowl', D.bowl, [
   {k:'consist',h:'Consistency',num:1,f:x=>x.consist+'%'},{k:'score',h:'Composite',num:1,f:x=>`<b>${x.score.toFixed(3)}</b>`},av]);
 
 document.getElementById('fit').innerHTML = D.fit.map(f=>`<div class="card"><h3>RR need: ${f.need}</h3><div class="pick">${f.pick}</div><div>${f.stat}</div><div class="note" style="margin-top:6px"><i>Source: ${f.src}</i></div></div>`).join('');
+const A=D.auction;
+document.getElementById('akpis').innerHTML = [[`₹${A.rr.purse_cr.toFixed(2)} cr`,'RR purse left for the auction'],[`${A.rr.slots_total} (${A.rr.slots_overseas} overseas)`,'RR open slots'],[`${A.rr.squad_size}`,'RR squad after retentions and trades'],[A.auction.date,`Mini-auction in ${A.auction.venue}. Registration closes ${A.auction.registration_deadline}; final list ${A.auction.final_list}`]].map(k=>`<div class="kpi"><div class="v">${k[0]}</div><div class="l">${k[1]}</div></div>`).join('');
+document.getElementById('anote').innerHTML = `Trades in: ${A.rr.traded_in.join('; ')}. Out: ${A.rr.traded_out.join('; ')}. Released: ${A.rr.released.join(', ')}. Sources: ${A.src}`;
+document.getElementById('apicks').innerHTML = `<p><b>${A.n_ret} of 20</b> are retained by other franchises and cannot be bought. <b>${A.n_rr}</b> (Shubham Dubey) is already at RR. <b>${A.n_pool}</b> hold no IPL contract (Hendricks, McCarthy, Humphreys, Mujeeb, Motie) and can be bought only if they register. None was released. Mohit Sharma (retired) has been replaced by Nitish Reddy.</p>`;
+document.getElementById('asq').textContent = A.squad.map(x=>x.player+(x.os?' (OS)':'')+(x.fee!=null?` ₹${x.fee} cr`:'')).join(', ');
+makeTable('tTg', A.targets.map((x,i)=>({...x,rank:i+1})), [{k:'tier',h:'Tier'},{k:'player',h:'Player',f:x=>`<b>${x.player}</b><div class="note">${x.os?'Overseas':'Indian'} · ${x.role}</div>`},
+  {k:'status',h:'Status (17 Nov)',f:x=>pill(x.status)},{k:'need',h:'RR need'},{k:'ev',h:'Pressure evidence (our data)'},{k:'band',h:'Band ₹ cr*'},{k:'flag',h:'Flag'}]);
+makeTable('tXi', A.xi.map(x=>({...x,rank:x.n})), [{k:'n',h:'#',num:1},{k:'player',h:'Player',f:x=>`<b>${x.player}</b>${x.os?' <span class="pill p-other">OS</span>':''}`},{k:'status',h:'Status',f:x=>`<span class="pill ${/buy/i.test(x.status)?'p-other':'p-rr'}">${x.status}</span>`},{k:'why',h:'Why'}]);
 const W=D.w, E=D.elig;
 document.getElementById('weights').innerHTML = `<li><b>Batters:</b> ${W.bat.lift} × lift over own baseline + ${W.bat.abs} × absolute pressure SR and phase-adjusted runs above expected + ${W.bat.survival} × survival (balls per dismissal) + ${W.bat.consistency} × consistency</li>
  <li><b>Bowlers:</b> ${W.bowl.lift} × lift + ${W.bowl.abs} × absolute economy and phase-adjusted runs saved + ${W.bowl.wickets} × wicket rate + ${W.bowl.consistency} × consistency + 0.05 × dot %</li>`;
 document.getElementById('elig').innerHTML = `<li>Batters: at least ${E.min_pressure_balls_bat} HP balls and ${E.min_pressure_innings_bat} pressure innings. Bowlers: at least ${E.min_pressure_balls_bowl} HP balls, ${E.min_pressure_spells_bowl} spells and ${E.min_hp_wickets_bowl} HP wickets.</li>
  <li>Auction relevance: at least ${E.min_ipl_hp_balls} IPL HP balls, or at least ${E.min_fullmember_t20i_hp_balls} Full-Member T20I HP balls.</li>
- <li>Pakistan and Bangladesh players excluded (${E.n_excluded_nation_bat} batters and ${E.n_excluded_nation_bowl} bowlers removed). Players not available as players are excluded too (Tim Southee).</li>
+ <li>Pakistan and Bangladesh players excluded (${E.n_excluded_nation_bat} batters and ${E.n_excluded_nation_bowl} bowlers removed). Players not available as players are excluded too (Tim Southee, coach; Mohit Sharma, retired).</li>
  <li>Eligible pool: ${E.n_eligible_batters} batters, ${E.n_eligible_bowlers} bowlers.</li>`;
 
 if (window.Chart){

@@ -82,6 +82,7 @@ OTHER_T20_WEIGHT = 0.70
 # Individual players scored but excluded from picks (not available as players)
 NOT_AVAILABLE_AS_PLAYER = {
     "Tim Southee": "KKR bowling coach for IPL 2026 (KKR.in, 13 Nov 2025); not available as a player",
+    "Mohit Sharma": "Retired from all forms of cricket on 3 Dec 2025 (ESPNcricinfo); not available as a player",
 }
 
 # Nations whose players are not available in the IPL -> excluded from eligibility
@@ -1157,7 +1158,13 @@ def main():
     charts["val_chase_win_normal_ball"] = val["chase_win_normal_ball"]
     print(val["overall"].round(2))
     from validation import phase_split
-    phase_split(bbb, bat_e.head(10)["player_name"].tolist(), bowl_e.head(10)["player_name"].tolist(), OUT)
+    extra_bat = ["Glenn Maxwell", "Rachin Ravindra", "Sikandar Raza", "Donovan Ferreira", "Riyan Parag",
+                 "Dhruv Jurel", "Yashasvi Jaiswal", "Ravindra Jadeja", "Nitish Rana", "Mark Chapman"]
+    extra_bowl = ["Matheesha Pathirana", "Lockie Ferguson", "Reece Topley", "Sikandar Raza", "Avesh Khan",
+                  "Akash Madhwal", "Jofra Archer", "Mohammed Shami", "Ravi Bishnoi", "Ravindra Jadeja",
+                  "Brijesh Sharma", "Sandeep Sharma", "Nandre Burger", "Glenn Maxwell", "Adil Rashid"]
+    phase_split(bbb, bat_e.head(10)["player_name"].tolist() + extra_bat,
+                bowl_e.head(10)["player_name"].tolist() + extra_bowl, OUT)
 
     print("=== Export tables ===")
     export_tables(bat_all, bat_e, bowl_all, bowl_e, verify, thr, charts)

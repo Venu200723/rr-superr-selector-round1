@@ -1,0 +1,20 @@
+player_name,role,overseas,fee_cr,how_acquired,pressure_batting,pressure_bowling
+Riyan Parag,Batting all-rounder (c),False,14.0,Retained,"bat #78 of 122: HP SR 156.7 vs 148.9 normal on 363 HP balls, 27% positive inns","bowl below eligibility: HP econ 11.27 vs 8.33, 3 HP wkts on 50 HP balls, 43% positive spells"
+Yashasvi Jaiswal,Opener,False,18.0,Retained,"bat #91 of 122: HP SR 154.4 vs 156.3 normal on 196 HP balls, 29% positive inns","bowl below eligibility: HP econ 15.59 vs nan, 0 HP wkts on 7 HP balls, 100% positive spells"
+Vaibhav Sooryavanshi,Opener,False,1.1,Retained,"bat below eligibility: HP SR 300.5 vs 219.1 normal on 40 HP balls, 100% positive inns",no high-pressure bowling sample in data
+Ravindra Jadeja,Spin all-rounder,False,14.0,Retained,"bat #49 of 122: HP SR 140.7 vs 131.7 normal on 379 HP balls, 42% positive inns","bowl #68 of 112: HP econ 8.34 vs 7.77, 23 HP wkts on 468 HP balls, 57% positive spells"
+Dhruv Jurel,Wicket-keeper batter,False,14.0,Retained,"bat #72 of 122: HP SR 151.8 vs 152.2 normal on 346 HP balls, 44% positive inns",no high-pressure bowling sample in data
+Jofra Archer,Pace,True,12.5,Retained,"bat below eligibility: HP SR 98.9 vs 162.2 normal on 74 HP balls, 0% positive inns","bowl #48 of 112: HP econ 9.55 vs 9.22, 20 HP wkts on 236 HP balls, 70% positive spells"
+Aman Rao Perala,Batter,False,0.3,Retained,no high-pressure batting sample in data,no high-pressure bowling sample in data
+Brijesh Sharma,Pace,False,0.3,Retained,"bat below eligibility: HP SR 100.0 vs 33.3 normal on 1 HP balls, nan% positive inns","bowl #22 of 112: HP econ 8.95 vs 10.43, 8 HP wkts on 120 HP balls, 88% positive spells"
+Nandre Burger,Left-arm pace,True,3.5,Retained,"bat below eligibility: HP SR 57.7 vs 102.0 normal on 9 HP balls, 0% positive inns","bowl #101 of 112: HP econ 11.66 vs 9.64, 8 HP wkts on 126 HP balls, 60% positive spells"
+Dasun Shanaka,Seam all-rounder,True,2.0,Retained,"bat #87 of 122: HP SR 141.4 vs 136.4 normal on 331 HP balls, 32% positive inns","bowl #51 of 112: HP econ 9.61 vs 8.67, 12 HP wkts on 128 HP balls, 71% positive spells"
+Donovan Ferreira,Finisher / wk,True,1.0,Retained,"bat #64 of 122: HP SR 171.5 vs 160.6 normal on 127 HP balls, 22% positive inns","bowl below eligibility: HP econ 15.15 vs 9.29, 0 HP wkts on 12 HP balls, 0% positive spells"
+Lhuan-dre Pretorius,Batter / wk,True,0.3,Retained,no high-pressure batting sample in data,no high-pressure bowling sample in data
+Ravi Bishnoi,Leg-spin,False,7.2,Retained,"bat below eligibility: HP SR 92.9 vs 93.4 normal on 67 HP balls, 44% positive inns","bowl #54 of 112: HP econ 8.87 vs 8.28, 52 HP wkts on 919 HP balls, 63% positive spells"
+Sandeep Sharma,Pace,False,4.0,Retained,"bat below eligibility: HP SR 100.0 vs 40.0 normal on 6 HP balls, 100% positive inns","bowl #90 of 112: HP econ 9.66 vs 8.95, 7 HP wkts on 187 HP balls, 50% positive spells"
+Shubham Dubey,Finisher,False,0.8,Retained,"bat #4 of 122: HP SR 182.6 vs 102.0 normal on 92 HP balls, 60% positive inns",no high-pressure bowling sample in data
+Sushant Mishra,Left-arm pace,False,0.9,Retained,"bat below eligibility: HP SR 33.3 vs nan normal on 3 HP balls, 100% positive inns","bowl below eligibility: HP econ 9.00 vs 11.75, 2 HP wkts on 14 HP balls, 100% positive spells"
+Yash Raj Punja,Spin,False,0.3,Retained,no high-pressure batting sample in data,no high-pressure bowling sample in data
+Mohammed Shami,Pace (traded in),False,8.0,Trade (17 Nov 2026),"bat below eligibility: HP SR 105.3 vs 128.8 normal on 24 HP balls, 17% positive inns","bowl #59 of 112: HP econ 9.60 vs 8.70, 19 HP wkts on 239 HP balls, 73% positive spells"
+Manimaran Siddharth,Left-arm spin (traded in),False,0.75,Trade (17 Nov 2026),no high-pressure batting sample in data,"bowl below eligibility: HP econ 9.77 vs 8.88, 3 HP wkts on 35 HP balls, 33% positive spells"

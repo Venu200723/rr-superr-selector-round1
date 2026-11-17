@@ -144,7 +144,7 @@ def styled_table(headers, rows, col_widths, ss):
     head = [Paragraph(h, ss["TableHeader"]) for h in headers]
     body = []
     for row in rows:
-        body.append([Paragraph(str(c), ss["TableCell"]) for c in row])
+        body.append([c if isinstance(c, Paragraph) else Paragraph(str(c), ss["TableCell"]) for c in row])
     t = Table([head] + body, colWidths=col_widths, repeatRows=1)
     style_cmds = [
         ("BACKGROUND", (0, 0), (-1, 0), RR_PURPLE),
@@ -340,7 +340,9 @@ def rr_fit_section(ss, topb, topw):
     def g(name, phase):
         return ps[(ps.player_name == name) & (ps.phase == phase)].iloc[0]
 
-    bosch, mohit = g("Corbin Bosch", "Overs 16-20"), g("Mohit Sharma", "Overs 16-20")
+    bosch, path = g("Corbin Bosch", "Overs 16-20"), g("Matheesha Pathirana", "Overs 16-20")
+    avs, brij = g("Avesh Khan", "Overs 16-20"), g("Brijesh Sharma", "Overs 16-20")
+    maxw = g("Glenn Maxwell", "Overs 16-20")
     sant = g("Mitchell Santner", "Overs 7-11")
     dub, rink = g("Shubham Dubey", "Overs 16-20"), g("Rinku Singh", "Overs 16-20")
     jacks = g("William Jacks", "Overs 16-20")
@@ -363,26 +365,26 @@ def rr_fit_section(ss, topb, topw):
     ], ss))
     out.append(p("Need-to-pick mapping (numbers from rr_fit_phase_stats.csv)", ss["H2"]))
     rows = [
-        ["Indian death-overs bowler", "Mohit Sharma (bowler #6)",
-         f"HP death overs: {int(mohit.hp_balls)} balls, econ {mohit.hp_econ:.2f}, {int(mohit.hp_wkts)} wkts; "
-         "27 HP wickets, all in the IPL"],
-        ["Overseas all-rounder who bowls at the death", "Corbin Bosch (bowler #1)",
-         f"HP death overs: {int(bosch.hp_balls)} balls, econ {bosch.hp_econ:.2f}, {int(bosch.hp_wkts)} wkts; "
-         "positive in 100% of pressure spells"],
-        ["Middle-overs (7-11) control and spin", "Mitchell Santner (bowler #2)",
+        ["Indian death-overs bowler", "Avesh Khan (released, LSG) / Brijesh Sharma (RR)",
+         f"Avesh: {int(avs.hp_balls)} HP death balls, econ {avs.hp_econ:.2f}, {int(avs.hp_wkts)} wkts. Brijesh: "
+         f"{int(brij.hp_balls)} balls at {brij.hp_econ:.2f}. (Our pick Mohit Sharma has retired.)"],
+        ["Overseas death bowler", "Matheesha Pathirana (released, KKR)",
+         f"HP death overs: {int(path.hp_balls)} balls, econ {path.hp_econ:.2f}, {int(path.hp_wkts)} wkts. "
+         f"Profile benchmark: Bosch (bowler #1, retained by MI) {int(bosch.hp_balls)} balls at {bosch.hp_econ:.2f}"],
+        ["Middle-overs (7-11) control and spin", "Mitchell Santner (bowler #2, retained by MI)",
          f"HP overs 7-11: {int(sant.hp_balls)} balls, econ {sant.hp_econ:.2f}, {int(sant.hp_wkts)} wkts "
          "(RR's overs 7-11 economy was 9.71)"],
-        ["Reliable death-overs finisher", "Shubham Dubey (batter #4, already RR)",
+        ["Reliable death-overs finisher", "Shubham Dubey (batter #4, retained by RR)",
          f"HP death overs: {int(dub.hp_balls)} balls at SR {dub.hp_sr:.1f}; pressure SR 182.6 vs 102.0 baseline"],
-        ["Finisher (auction / trade target)", "Rinku Singh (batter #9)",
-         f"HP death overs: {int(rink.hp_balls)} balls at SR {rink.hp_sr:.1f}, only {int(rink.hp_wkts)} dismissals"],
-        ["Overseas finisher if Hetmyer's slot frees", "William Jacks (batter #3)",
-         f"HP death overs: SR {jacks.hp_sr:.1f} on {int(jacks.hp_balls)} balls (small sample); also bowls off-spin"],
+        ["Overseas finisher (Hetmyer released)", "Glenn Maxwell (if registered) / Rachin Ravindra",
+         f"Maxwell HP death overs: SR {maxw.hp_sr:.1f} on {int(maxw.hp_balls)} balls; overall HP SR 174.8 vs 155.5. "
+         f"Our picks Jacks (SR {jacks.hp_sr:.1f}) and Rinku (SR {rink.hp_sr:.1f}) were retained by MI / KKR"],
     ]
     out.append(styled_table(["RR need (sourced)", "Pick", "Pressure evidence (our data)"], rows,
                             [48*mm, 42*mm, 92*mm], ss))
-    out.append(p("Table 3. RR needs mapped to top picks. HP = high-pressure balls. Availability caveats are in "
-                 "Section 8.1: Mohit's 2026 status is unreported, Bosch is at MI and Santner is a likely MI retention.",
+    out.append(p("Table 3. RR needs mapped to available players after the 17 Nov 2026 retentions. HP = "
+                 "high-pressure balls. Bosch, Santner, Jacks and Rinku were retained by their teams and Mohit Sharma "
+                 "has retired, so the buyable alternatives are named here; the full shortlist is in Section 9.",
                  ss["Caption"]))
     out.append(p("Other picks, in brief", ss["H2"]))
     out.append(bullet_list([
@@ -392,9 +394,105 @@ def rr_fit_section(ss, topb, topw):
         "<b>Naman Dhir / Sameer Rizvi / Shashank Singh</b>: young Indian middle order; pressure SR 196.8 / 170.2 / 175.1.",
         "<b>McCarthy (right-arm medium) / Humphreys (left-arm spin)</b>: beat expected HP economy by ~0.30 runs per ball.",
         "<b>Narine / Mujeeb / Motie</b>: spin with 83% / 82% / 69% positive pressure spells. "
-        "<b>Eshan Malinga</b>: right-arm seam, 24 HP wickets. <b>Harpreet Brar</b> (No. 10): Indian left-arm "
-        "spinner; HP economy 7.57 vs 8.51 baseline, best in overs 12-15 (5.62 on 48 HP balls), a second Indian "
-        "spin option alongside Bishnoi and Jadeja.",
+        "<b>Eshan Malinga</b>: right-arm seam, 24 HP wickets. <b>Harpreet Brar</b> (No. 9): Indian left-arm "
+        "spinner; HP economy 7.57 vs 8.51 baseline, best in overs 12-15 (5.62 on 48 HP balls). <b>Nitish Reddy</b> "
+        "(No. 10): Indian seam all-rounder, replaces the retired Mohit Sharma in the list.",
+    ], ss))
+    return out
+
+
+def auction_section(ss):
+    R = json.load(open(ROOT / "retention" / "retention_2027.json"))
+    sq = pd.read_csv(OUT / "rr_retained_squad.csv")
+    tg = pd.read_csv(OUT / "rr_auction_targets.csv")
+    xi = pd.read_csv(OUT / "rr_proposed_xi.csv")
+    rr = R["rr"]
+    small = ParagraphStyle("auc", parent=ss["TableCell"], fontSize=7.2, leading=8.8)
+
+    def ptab(headers, rows, widths):
+        return styled_table(headers, [[Paragraph(str(c), small) for c in r] for r in rows], widths, ss)
+
+    out = [PageBreak(), p("9. IPL 2027 Mini-Auction Update (17 Nov 2026 retention list) — RR Needs, Targets &amp; Playing XI", ss["H1"])]
+    out.append(p("Status as of 17 Nov 2026 (IST). Sources: Times of India team-wise list (21:06 IST), News18 (20:13 IST), "
+                 "CricTracker RR list (17:47 IST), Mint and Cricinfo (17 Nov 2026). Auction: <b>16 Dec 2026, Goa</b>; "
+                 "registration closes 23 Nov, extra player requests by 27 Nov, final auction list 3 Dec (Cricinfo, Mint). "
+                 "Price bands are our own rough estimates, not reported figures.", ss["Body"]))
+    out.append(p("9.1 RR after retention", ss["H2"]))
+    n_os = int(sq.overseas.sum())
+    out.append(bullet_list([
+        f"<b>Squad {len(sq)}</b> ({n_os} overseas), <b>purse remaining Rs {rr['purse_cr']:.2f} cr</b>, "
+        f"<b>{rr['slots_total']} slots, {rr['slots_overseas']} overseas</b>. Retained and traded-in fees in our table sum to "
+        f"Rs {sq.fee_cr.sum():.2f} cr (CricTracker fees).",
+        "<b>Trades:</b> in, " + "; ".join(rr["traded_in"]) + ". Out, " + "; ".join(rr["traded_out"]) + ".",
+        "<b>Released:</b> " + ", ".join(rr["released"]) + ".",
+    ], ss))
+    rows = [[r.player_name, r.role, "Yes" if r.overseas else "", f"{r.fee_cr:g}" if pd.notna(r.fee_cr) else "n/a",
+             r.pressure_batting if "no high" not in r.pressure_batting else r.pressure_bowling]
+            for r in sq.itertuples()]
+    for k, r in enumerate(sq.itertuples()):
+        if r.role.startswith(("Pace", "Leg", "Left-arm pace", "Spin", "Left-arm spin")) and "no high" not in r.pressure_bowling:
+            rows[k][4] = r.pressure_bowling
+    out.append(ptab(["Player", "Role", "OS", "Rs cr", "Pressure profile (our data)"], rows,
+                    [33*mm, 32*mm, 8*mm, 11*mm, 98*mm]))
+    out.append(p("Table 4. RR squad after retentions and trades (rr_retained_squad.csv). 'Below eligibility' = "
+                 "sample too small to rank; it is not a negative rating.", ss["Caption"]))
+    pr = R["purses_cr"]
+    out.append(ptab(["Team"] + list(pr), [["Purse (Rs cr)"] + [f"{v[0]:.2f}" for v in pr.values()],
+                                         ["Slots / overseas"] + [f"{v[1]} / {v[2]}" for v in pr.values()]],
+                    [26*mm] + [15.6*mm]*10))
+    out.append(p(f"Table 5. League purses after retentions (Mint / TOI, 17 Nov 2026): {sum(v[1] for v in pr.values())} "
+                 f"slots, {sum(v[2] for v in pr.values())} overseas. RR's purse ranks 7th of 10, so it is outbid easily "
+                 "by LSG, KKR, SRH and DC on marquee names.", ss["Caption"]))
+
+    out.append(p("9.2 What RR need (gaps after retention)", ss["H2"]))
+    out.append(bullet_list([
+        "<b>Overseas death bowler.</b> Milne and Maphaka have gone and RR's 2026 death economy was a problem; Archer is the "
+        "only proven overseas death option, and Burger's HP economy is 11.66.",
+        "<b>Overseas finisher.</b> Hetmyer (Rs 11 cr) has been released and Curran traded; Ferreira is the only overseas finisher.",
+        "<b>Indian seam depth.</b> Deshpande and Kuldeep Sen have been released and Mohit Sharma has retired. Shami (traded in) "
+        "and Brijesh Sharma help, and Sandeep went at 11.39 in 2026 (Hindustan Times, 12 Nov 2026).",
+        "<b>Spin is covered:</b> Bishnoi, Jadeja, Siddharth and Punja, so spin is a backup buy only.",
+    ], ss))
+
+    out.append(p("9.3 Prioritised mini-auction shortlist (available players only)", ss["H2"]))
+    rows = [[r.tier, r.player_name, ("OS " if r.overseas else "IND ") + r.role, r.status_17nov, r.pressure_evidence,
+             r.price_band_cr_estimate, r.flag] for r in tg.itertuples()]
+    out.append(ptab(["Tier", "Player", "Role", "Status", "Pressure evidence (our data)", "Band Rs cr*", "Flag"], rows,
+                    [14*mm, 21*mm, 22*mm, 22*mm, 59*mm, 12*mm, 32*mm]))
+    out.append(p("Table 6. rr_auction_targets.csv. *Rough analyst estimate. 'Uncontracted' players enter the auction only if they "
+                 "register by 23 Nov; check the 3 Dec list before bidding. Every player is checked against all ten retained lists "
+                 "and the retired / opted-out list (Starc and Head opted out; Rahane is reported retired).", ss["Caption"]))
+    plan = ["Matheesha Pathirana", "Glenn Maxwell", "Avesh Khan", "Reece Topley", "Akash Madhwal", "Nitish Rana"]
+    mid = {r.player_name: sum(float(x) for x in r.price_band_cr_estimate.split("-")) / 2 for r in tg.itertuples()}
+    spend = sum(mid[n] for n in plan)
+    nos = int(tg[tg.player_name.isin(plan)].overseas.sum())
+    out.append(p(f"<b>Illustrative plan</b> (mid-band estimates): {', '.join(plan)} = about Rs {spend:.1f} cr for 6 slots "
+                 f"({nos} overseas), leaving about Rs {rr['purse_cr'] - spend:.1f} cr for price overruns. If Maxwell has not registered, "
+                 "switch to Rachin Ravindra or Sikandar Raza. If Pathirana goes above Rs 12 cr or fails a fitness check, switch to "
+                 "Ferguson plus Topley.", ss["Body"]))
+
+    out.append(p("9.4 Proposed RR playing XI for IPL 2027", ss["H2"]))
+    rows = [[int(r.bat_order), r.player_name, r.status, "Yes" if r.overseas else "", r.rationale] for r in xi.itertuples()]
+    out.append(ptab(["#", "Player", "Status", "OS", "Why"], rows, [8*mm, 34*mm, 30*mm, 8*mm, 102*mm]))
+    out.append(p(f"Table 7. rr_proposed_xi.csv: {int(xi.overseas.sum())} overseas (Maxwell, Ferreira, Archer, Pathirana).", ss["Caption"]))
+    out.append(bullet_list([
+        "<b>Impact sub.</b> When chasing, bring in <b>Shubham Dubey</b> (our batter #4; 210.9 SR on 55 HP death balls) for a bowler. "
+        "When defending, bring in <b>Avesh Khan</b> or <b>Brijesh Sharma</b> (score rank 22; 88% positive spells; HP economy 8.95 "
+        "vs 10.43) for a batter. Overseas cover: Burger or Topley for Archer or Pathirana, and Rachin for Maxwell.",
+        "<b>Bowling plan.</b> Powerplay: Archer 2 and Shami 2-3 with the new ball. Overs 7-15: Bishnoi 4, Jadeja 4 and Maxwell 1-2 "
+        "(this targets RR's overs 7-11 economy of 9.71). Death: Pathirana 3, Archer 2, Shami 1. Bishnoi stays out of the death "
+        "(HP death economy 11.33 in our data).",
+        "<b>Batting.</b> Jaiswal and Sooryavanshi open, Jurel and Parag hold the middle, and Maxwell, Ferreira and Jadeja finish, "
+        "with Dubey as the impact finisher. Retained core: 9 of the XI. Proposed buys: Maxwell and Pathirana.",
+    ], ss))
+    out.append(p("9.5 What is unconfirmed", ss["H2"]))
+    out.append(bullet_list([
+        "Registrations for Maxwell, Topley, Sikandar Raza, Adil Rashid, Hendricks, McCarthy, Humphreys, Mujeeb and Motie are "
+        "<b>unreported</b> until the 3 Dec list. Maxwell skipped IPL 2026.",
+        "Pathirana's fitness after his 2026 hamstring injury, and Ferguson's form (3 games in 2026), carry risk.",
+        "Source conflicts: TOI lists Arshin Kulkarni as both retained and released by LSG, and earlier projections had Nehal "
+        "Wadhera retained while TOI and Cricinfo list him as released. Neither player affects RR's plan.",
+        "RR purse and slot figures match across TOI, CricTracker and Mint. Fees are as reported by CricTracker.",
     ], ss))
     return out
 
@@ -441,7 +539,8 @@ def build():
         "spells), followed by the high-floor left-arm spin of <b>Mitchell Santner</b> and two Irish "
         "options (seamer Barry McCarthy, left-arm spinner Matthew Humphreys) who beat the expected "
         "economy for the overs they bowled. Section 2.3 validates the index against the data itself. Because Pakistan and Bangladesh players are not "
-        "available in the IPL, they are excluded from the eligible pool (Section 5).",
+        "available in the IPL, they are excluded from the eligible pool (Section 5). Section 9 applies the "
+        "17 Nov 2026 IPL 2027 retention lists: RR's purse, needs, a mini-auction shortlist and a proposed XI.",
         ss["Body"],
     ))
 
@@ -581,9 +680,9 @@ def build():
         f"{meta.get('n_excluded_nation_bat', 0)} otherwise-eligible batters and "
         f"{meta.get('n_excluded_nation_bowl', 0)} otherwise-eligible bowlers. Z-scores and shrinkage "
         "priors are computed on the remaining pool; all other thresholds and weights are unchanged.",
-        "<b>Not available as a player:</b> Tim Southee stays in the scored pool, but he is removed from the "
-        "picks because he is KKR's bowling coach for IPL 2026 (KKR.in, 13 Nov 2025). Picks are re-ranked "
-        "over the remaining players.",
+        "<b>Not available as a player:</b> Tim Southee (KKR bowling coach for IPL 2026; KKR.in, 13 Nov 2025) "
+        "and Mohit Sharma (retired from all cricket on 3 Dec 2025; ESPNcricinfo, CricTracker) stay in the "
+        "scored pool but are removed from the picks. Picks are re-ranked over the remaining players.",
         f"Resulting eligible pool: <b>{meta['n_eligible_batters']} batters</b> and "
         f"<b>{meta['n_eligible_bowlers']} bowlers</b>.",
         "All rankings below are taken strictly from this eligible pool, sorted by composite score.",
@@ -665,31 +764,35 @@ def build():
         "bowled, 15 pressure wickets and a positive contribution in every pressure spell. Santner ranks "
         "second on volume and floor (523 HP balls, 40 wickets, 82% positive spells). McCarthy and Humphreys "
         "both save ~0.30 runs per pressure ball versus expectation. Mujeeb combines strong absolute "
-        "economy (7.23) with a high floor (82% positive spells); Mohit Sharma (27 HP wickets, all in the IPL), "
-        "Motie, Narine (426 HP IPL balls at 7.00), Eshan Malinga (83% positive spells) and Harpreet Brar "
-        "(7.57 vs 8.51 baseline, 80% positive spells) complete the list. <b>Tim Southee</b> scored 5th on the "
-        "composite (1.304) but is excluded from the picks because he is KKR's bowling coach and not available "
-        "as a player. Everyone below him moves up one place, and Brar (score rank 11) becomes No. 10. The "
-        "scoring pool is unchanged, so no other score moves (bowler_rankings.csv: score_rank, available_as_player).",
+        "economy (7.23) with a high floor (82% positive spells); Motie, Narine (426 HP IPL balls at 7.00), "
+        "Eshan Malinga (83% positive spells), Harpreet Brar (7.57 vs 8.51 baseline, 80% positive spells) and "
+        "Nitish Reddy complete the list. Two scored players are excluded because they are not available as "
+        "players: <b>Tim Southee</b> (score rank 5, KKR bowling coach) and <b>Mohit Sharma</b> (score rank 7, "
+        "retired from all cricket on 3 Dec 2025). Everyone below them moves up, and Nitish Reddy (score rank 12) "
+        "becomes No. 10. The scoring pool is unchanged, so no score moves (bowler_rankings.csv: score_rank, "
+        "available_as_player).",
         ss["Body"],
     ))
 
     # RR squad fit
     story += rr_fit_section(ss, topb, topw)
 
-    story.append(p("8.1 Auction availability (public reporting as of 14 Nov 2026)", ss["H2"]))
+    av = pd.read_csv(ROOT / "auction_availability.csv")
+    picks = pd.concat([topb, topw])
+    st = picks["availability_status"].fillna("")
+    n_ret = int(st.str.startswith("RETAINED").sum()); n_rr = int(st.str.startswith("ALREADY RR").sum())
+    n_pool = int(st.str.startswith("NOT IN ANY").sum())
+    story.append(p("8.1 Auction availability (official retention lists, 17 Nov 2026)", ss["H2"]))
     story.append(p(
-        "As of 14 Nov 2026 no franchise has published its IPL 2027 retention list: the BCCI moved the "
-        "retention deadline to <b>17 Nov 2026</b> (Cricinfo; IANS, 2 Nov 2026), registration closes 23 Nov "
-        "and the mini-auction is on 16 Dec 2026 in Goa. Ten players have moved in four confirmed trades "
-        "(Pant, Kuldeep, Natarajan, Zeeshan Ansari, Livingstone, Jack Edwards, Khaleel Ahmed, Nathan Ellis, "
-        "Hardik Pandya, Arshdeep Singh; Sportstar / Cricinfo, 11 Nov 2026). <b>None of our 20 picks is in a "
-        "confirmed trade.</b> RR-LSG talks on a Shami / Sam Curran deal were still unconfirmed on 13 Nov "
-        "(CricTracker). \"Likely retained\" below comes from a media projection (Sporting News tracker), not "
-        "an official list, so treat it as unconfirmed. Ranking is by pressure reliability, and availability "
-        "is flagged rather than used to drop players.",
-        ss["Body"],
-    ))
+        "All ten franchises published their IPL 2027 retained and released lists on <b>17 Nov 2026</b> "
+        "(Times of India 21:06 IST; News18 20:13 IST; CricTracker; Mint; Cricinfo). Of our 20 picks, "
+        f"<b>{n_ret} are retained by other franchises</b> and cannot be bought, <b>{n_rr} (Shubham Dubey) is "
+        f"already at RR</b>, and <b>{n_pool} hold no IPL contract</b> (Hendricks, McCarthy, Humphreys, Mujeeb, "
+        "Motie): they reach the 16 Dec auction in Goa only if they register by 23 Nov; the registered pool "
+        "is published on 3 Dec. None of our 20 picks was released. Mohit Sharma, in the earlier list, retired "
+        "on 3 Dec 2025 and has been replaced by Nitish Reddy (Section 7.1). The ranking still measures pressure "
+        "reliability, so retained players stay in it; Section 9 lists the players RR can actually buy.",
+        ss["Body"]))
     story.append(p("Batters", ss["H2"]))
     story.append(avail_table(topb, ss))
     story.append(Spacer(1, 4*mm))
@@ -697,8 +800,9 @@ def build():
     story.append(avail_table(topw, ss))
 
     # Reliability & limitations
+    story += auction_section(ss)
     story.append(PageBreak())
-    story.append(p("9. Reliability Checks &amp; Limitations", ss["H1"]))
+    story.append(p("10. Reliability Checks &amp; Limitations", ss["H1"]))
     story.append(bullet_list([
         "<b>Consistency is a scored pillar</b>, not a post-hoc note: every ranked player’s match-level "
         "positive-contribution rate is part of the composite (Figures 5 &amp; 8).",
@@ -716,11 +820,14 @@ def build():
         "relative to usual level, with absolute level still heavily weighted.",
     ], ss))
 
-    story.append(p("10. Reproducibility", ss["H1"]))
+    story.append(p("11. Reproducibility", ss["H1"]))
     story.append(p(
         "All results are regenerated by <font face='Courier'>/workspace/rr_auction/analysis.py</font> "
         "from the supplied CSVs. Outputs: <font face='Courier'>batter_rankings.csv</font>, "
-        "<font face='Courier'>bowler_rankings.csv</font>, <font face='Courier'>top10_*.csv</font>, "
+        "<font face='Courier'>bowler_rankings.csv</font>, <font face='Courier'>top10_*.csv</font>; "
+        "<font face='Courier'>auction_targets.py</font> merges <font face='Courier'>retention/retention_2027.json</font> "
+        "(17 Nov 2026 lists) into <font face='Courier'>rr_retained_squad.csv</font>, "
+        "<font face='Courier'>rr_auction_targets.csv</font> and <font face='Courier'>rr_proposed_xi.csv</font>; "
         "charts in <font face='Courier'>charts/</font>, and this report. Randomness: none — the pipeline "
         "is fully deterministic.",
         ss["Body"],
@@ -729,7 +836,7 @@ def build():
     story.append(Spacer(1, 8 * mm))
     story.append(p(
         "<b>Final submission lists (Unstop dropdowns):</b> use Table 1 ranks 1–10 for batters and "
-        "Table 2 ranks 1–10 for bowlers exactly as printed — no ties, no repeats.",
+        "Table 2 ranks 1–10 for bowlers exactly as printed — no ties, no repeats. Note: the bowler list changed on 17 Nov 2026 (Mohit Sharma retired; Nitish Reddy now No. 10).",
         ss["Body"],
     ))
 

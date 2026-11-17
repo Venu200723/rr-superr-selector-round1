@@ -51,26 +51,41 @@ val = {
 }
 def g(n, p): return ps[(ps.player_name == n) & (ps.phase == p)].iloc[0]
 rank_w = {r["player"]: r["rank"] for r in bowl}; rank_b = {r["player"]: r["rank"] for r in bat}
-m, b_, sa = g("Mohit Sharma", "Overs 16-20"), g("Corbin Bosch", "Overs 16-20"), g("Mitchell Santner", "Overs 7-11")
-du, ri = g("Shubham Dubey", "Overs 16-20"), g("Rinku Singh", "Overs 16-20")
+b_, sa = g("Corbin Bosch", "Overs 16-20"), g("Mitchell Santner", "Overs 7-11")
+pa, av_, br = g("Matheesha Pathirana", "Overs 16-20"), g("Avesh Khan", "Overs 16-20"), g("Brijesh Sharma", "Overs 16-20")
+mx, du = g("Glenn Maxwell", "Overs 16-20"), g("Shubham Dubey", "Overs 16-20")
 fit = [
-    {"need": "An Indian death-overs bowler", "pick": f"Mohit Sharma (bowler #{rank_w['Mohit Sharma']})",
-     "stat": f"Death overs under pressure: {int(m.hp_balls)} balls, economy {m.hp_econ:.2f}, {int(m.hp_wkts)} wickets",
-     "src": "Sports Yaari RR report card, 31 May 2026; Sandeep Sharma went at 11.39 (Hindustan Times, 12 Nov 2026)"},
-    {"need": "An overseas all-rounder who can bowl at the death", "pick": f"Corbin Bosch (bowler #{rank_w['Corbin Bosch']})",
-     "stat": f"Death overs under pressure: {int(b_.hp_balls)} balls, economy {b_.hp_econ:.2f}, {int(b_.hp_wkts)} wickets; positive in 100% of pressure spells",
-     "src": "Sports Yaari RR report card, 31 May 2026"},
-    {"need": "Middle-overs control (RR economy in overs 7-11 was 9.71, second-worst)", "pick": f"Mitchell Santner (bowler #{rank_w['Mitchell Santner']})",
-     "stat": f"Overs 7-11 under pressure: {int(sa.hp_balls)} balls, economy {sa.hp_econ:.2f}, {int(sa.hp_wkts)} wickets",
-     "src": "Hindustan Times, 12 Nov 2026; The Hindu, 25 May 2026 (spin a concern)"},
-    {"need": "A reliable finisher (RR death-overs scoring rate 10.62, 7th)", "pick": f"Shubham Dubey (#{rank_b['Shubham Dubey']}, already at RR) / Rinku Singh (#{rank_b['Rinku Singh']})",
-     "stat": f"Death overs under pressure: Dubey SR {du.hp_sr:.1f} on {int(du.hp_balls)} balls; Rinku SR {ri.hp_sr:.1f} on {int(ri.hp_balls)} balls, {int(ri.hp_wkts)} dismissals",
+    {"need": "An Indian death-overs bowler (Deshpande and Kuldeep Sen released; our pick Mohit Sharma retired)",
+     "pick": "Avesh Khan (released by LSG) / Brijesh Sharma (retained by RR)",
+     "stat": f"Death overs under pressure: Avesh {int(av_.hp_balls)} balls, economy {av_.hp_econ:.2f}, {int(av_.hp_wkts)} wickets; Brijesh {int(br.hp_balls)} balls at {br.hp_econ:.2f}",
+     "src": "Retention lists, TOI / CricTracker, 17 Nov 2026; Sandeep Sharma went at 11.39 in 2026 (Hindustan Times, 12 Nov 2026)"},
+    {"need": "An overseas death bowler (Milne and Maphaka released)", "pick": "Matheesha Pathirana (released by KKR)",
+     "stat": f"Death overs under pressure: {int(pa.hp_balls)} balls, economy {pa.hp_econ:.2f}, {int(pa.hp_wkts)} wickets. Our #1 Bosch ({int(b_.hp_balls)} balls at {b_.hp_econ:.2f}) was retained by MI. Flag: hamstring injury in 2026.",
+     "src": "TOI 17 Nov 2026; Cricbuzz (injury)"},
+    {"need": "An overseas finisher (Hetmyer released, Curran traded)", "pick": "Glenn Maxwell (if he registers) / Rachin Ravindra (released by KKR)",
+     "stat": f"Maxwell: pressure SR 174.8 vs 155.5 on 302 HP balls; death overs SR {mx.hp_sr:.1f} on {int(mx.hp_balls)} balls. His registration is unconfirmed.",
+     "src": "TOI / CricTracker 17 Nov 2026; Al Jazeera 2 Dec 2025 (skipped IPL 2026)"},
+    {"need": "Middle-overs control (RR economy in overs 7-11 was 9.71, second-worst)", "pick": "Already covered: Bishnoi, Jadeja, Siddharth (traded in)",
+     "stat": f"Our #2 Santner (overs 7-11: {int(sa.hp_balls)} balls at {sa.hp_econ:.2f}) was retained by MI, so spin is a backup buy only (Mujeeb, Adil Rashid).",
+     "src": "Hindustan Times, 12 Nov 2026; The Hindu, 25 May 2026"},
+    {"need": "A reliable finisher (RR death-overs scoring rate 10.62, 7th)", "pick": f"Shubham Dubey (#{rank_b['Shubham Dubey']}, retained by RR) as impact sub",
+     "stat": f"Death overs under pressure: SR {du.hp_sr:.1f} on {int(du.hp_balls)} balls",
      "src": "Hindustan Times, 12 Nov 2026; Sports Yaari, 31 May 2026"},
 ]
+R = json.load(open(ROOT / "retention" / "retention_2027.json"))
+sq = pd.read_csv(OUT / "rr_retained_squad.csv"); tg = pd.read_csv(OUT / "rr_auction_targets.csv"); xi = pd.read_csv(OUT / "rr_proposed_xi.csv")
+auction = {"rr": R["rr"], "auction": R["auction"], "purses": R["purses_cr"], "src": R["source_note"],
+           "squad": [{"player": r.player_name, "role": r.role, "os": bool(r.overseas), "fee": None if pd.isna(r.fee_cr) else float(r.fee_cr)} for r in sq.itertuples()],
+           "targets": [{"tier": r.tier, "player": r.player_name, "role": r.role, "os": bool(r.overseas), "status": r.status_17nov,
+                        "ev": r.pressure_evidence, "band": r.price_band_cr_estimate, "flag": r.flag, "need": r.rr_need} for r in tg.itertuples()],
+           "xi": [{"n": int(r.bat_order), "player": r.player_name, "status": r.status, "os": bool(r.overseas), "why": r.rationale} for r in xi.itertuples()],
+           "n_ret": int(sum(x["status"].startswith("RETAINED") for x in bat + bowl)),
+           "n_rr": int(sum(x["status"].startswith("ALREADY RR") for x in bat + bowl)),
+           "n_pool": int(sum(x["status"].startswith("NOT IN ANY") for x in bat + bowl))}
 elig = {k: meta[k] for k in ["min_pressure_balls_bat", "min_pressure_innings_bat", "min_pressure_balls_bowl",
         "min_pressure_spells_bowl", "min_hp_wickets_bowl", "min_ipl_hp_balls", "min_fullmember_t20i_hp_balls",
         "n_eligible_batters", "n_eligible_bowlers", "n_excluded_nation_bat", "n_excluded_nation_bowl"]}
-data = {"bat": bat, "bowl": bowl, "val": val, "fit": fit, "elig": elig,
+data = {"bat": bat, "bowl": bowl, "val": val, "fit": fit, "elig": elig, "auction": auction,
         "w": {"bat": meta["bat_weights"], "bowl": meta["bowl_weights"]}}
 html = (ROOT / "dashboard_template.html").read_text().replace("/*__DATA__*/null", json.dumps(data))
 (DASH / "index.html").write_text(html)
