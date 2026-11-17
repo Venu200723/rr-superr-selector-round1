@@ -340,9 +340,9 @@ def rr_fit_section(ss, topb, topw):
     def g(name, phase):
         return ps[(ps.player_name == name) & (ps.phase == phase)].iloc[0]
 
-    bosch, path = g("Corbin Bosch", "Overs 16-20"), g("Matheesha Pathirana", "Overs 16-20")
+    bosch, ferg = g("Corbin Bosch", "Overs 16-20"), g("Lockie Ferguson", "Overs 16-20")
+    coet, rach = g("Gerald Coetzee", "Overs 16-20"), g("Rachin Ravindra", "Overs 16-20")
     avs, brij = g("Avesh Khan", "Overs 16-20"), g("Brijesh Sharma", "Overs 16-20")
-    maxw = g("Glenn Maxwell", "Overs 16-20")
     sant = g("Mitchell Santner", "Overs 7-11")
     dub, rink = g("Shubham Dubey", "Overs 16-20"), g("Rinku Singh", "Overs 16-20")
     jacks = g("William Jacks", "Overs 16-20")
@@ -368,16 +368,16 @@ def rr_fit_section(ss, topb, topw):
         ["Indian death-overs bowler", "Avesh Khan (released, LSG) / Brijesh Sharma (RR)",
          f"Avesh: {int(avs.hp_balls)} HP death balls, econ {avs.hp_econ:.2f}, {int(avs.hp_wkts)} wkts. Brijesh: "
          f"{int(brij.hp_balls)} balls at {brij.hp_econ:.2f}. (Our pick Mohit Sharma has retired.)"],
-        ["Overseas death bowler", "Matheesha Pathirana (released, KKR)",
-         f"HP death overs: {int(path.hp_balls)} balls, econ {path.hp_econ:.2f}, {int(path.hp_wkts)} wkts. "
-         f"Profile benchmark: Bosch (bowler #1, retained by MI) {int(bosch.hp_balls)} balls at {bosch.hp_econ:.2f}"],
+        ["Overseas death bowler", "Lockie Ferguson (released, PBKS) / Gerald Coetzee (released, SRH)",
+         f"Ferguson: {int(ferg.hp_balls)} HP death balls, econ {ferg.hp_econ:.2f}, {int(ferg.hp_wkts)} wkts. Coetzee: "
+         f"{int(coet.hp_balls)} balls at {coet.hp_econ:.2f}, {int(coet.hp_wkts)} wkts. Bosch (bowler #1) was retained by MI"],
         ["Middle-overs (7-11) control and spin", "Mitchell Santner (bowler #2, retained by MI)",
          f"HP overs 7-11: {int(sant.hp_balls)} balls, econ {sant.hp_econ:.2f}, {int(sant.hp_wkts)} wkts "
          "(RR's overs 7-11 economy was 9.71)"],
         ["Reliable death-overs finisher", "Shubham Dubey (batter #4, retained by RR)",
          f"HP death overs: {int(dub.hp_balls)} balls at SR {dub.hp_sr:.1f}; pressure SR 182.6 vs 102.0 baseline"],
-        ["Overseas finisher (Hetmyer released)", "Glenn Maxwell (if registered) / Rachin Ravindra",
-         f"Maxwell HP death overs: SR {maxw.hp_sr:.1f} on {int(maxw.hp_balls)} balls; overall HP SR 174.8 vs 155.5. "
+        ["Overseas middle-order bat (Hetmyer released)", "Rachin Ravindra (released, KKR)",
+         f"HP SR 164.1 vs 135.5 (batter score rank 18); death overs SR {rach.hp_sr:.1f} on {int(rach.hp_balls)} balls. "
          f"Our picks Jacks (SR {jacks.hp_sr:.1f}) and Rinku (SR {rink.hp_sr:.1f}) were retained by MI / KKR"],
     ]
     out.append(styled_table(["RR need (sourced)", "Pick", "Pressure evidence (our data)"], rows,
@@ -417,6 +417,16 @@ def auction_section(ss):
                  "CricTracker RR list (17:47 IST), Mint and Cricinfo (17 Nov 2026). Auction: <b>16 Dec 2026, Goa</b>; "
                  "registration closes 23 Nov, extra player requests by 27 Nov, final auction list 3 Dec (Cricinfo, Mint). "
                  "Price bands are our own rough estimates, not reported figures.", ss["Body"]))
+    ver = pd.read_csv(OUT / "rr_target_verification.csv")
+    fails = ver[ver.verdict.str.startswith("FAIL")]
+    out.append(p("<b>Correction, 17 Nov 2026:</b> the first version of this section recommended <b>Glenn Maxwell</b> as a "
+                 "must-buy. That was wrong. Maxwell opted out of IPL 2026, signed a multi-year PSL deal with Hyderabad Kingsmen "
+                 "that runs in the IPL window (Business Recorder 19 Feb 2026; Sixty.pk 25 Feb 2026), retired from international, "
+                 "first-class and List A cricket on 2 Nov 2026 (Cricinfo; cricket.com.au), and has no reported IPL 2027 registration. "
+                 "Every target was then re-checked for contract status, retirement or coaching role, PAK/BAN eligibility, fitness and "
+                 f"intent (Table 6a). {len(fails)} players were removed: " + ", ".join(fails.player_name) + ". Pathirana moves to backup "
+                 "because he has not played since his June 2026 hamstring surgery. The shortlist now favours players whose release "
+                 "on 17 Nov 2026 is confirmed.", ss["Body"]))
     out.append(p("9.1 RR after retention", ss["H2"]))
     n_os = int(sq.overseas.sum())
     out.append(bullet_list([
@@ -462,36 +472,47 @@ def auction_section(ss):
     out.append(p("Table 6. rr_auction_targets.csv. *Rough analyst estimate. 'Uncontracted' players enter the auction only if they "
                  "register by 23 Nov; check the 3 Dec list before bidding. Every player is checked against all ten retained lists "
                  "and the retired / opted-out list (Starc and Head opted out; Rahane is reported retired).", ss["Caption"]))
-    plan = ["Matheesha Pathirana", "Glenn Maxwell", "Avesh Khan", "Reece Topley", "Akash Madhwal", "Nitish Rana"]
+    plan = ["Rachin Ravindra", "Lockie Ferguson", "Avesh Khan", "Gerald Coetzee", "Nitish Rana", "Akash Madhwal"]
     mid = {r.player_name: sum(float(x) for x in r.price_band_cr_estimate.split("-")) / 2 for r in tg.itertuples()}
     spend = sum(mid[n] for n in plan)
     nos = int(tg[tg.player_name.isin(plan)].overseas.sum())
     out.append(p(f"<b>Illustrative plan</b> (mid-band estimates): {', '.join(plan)} = about Rs {spend:.1f} cr for 6 slots "
-                 f"({nos} overseas), leaving about Rs {rr['purse_cr'] - spend:.1f} cr for price overruns. If Maxwell has not registered, "
-                 "switch to Rachin Ravindra or Sikandar Raza. If Pathirana goes above Rs 12 cr or fails a fitness check, switch to "
-                 "Ferguson plus Topley.", ss["Body"]))
+                 f"({nos} overseas), leaving about Rs {rr['purse_cr'] - spend:.1f} cr for price overruns. If Pathirana is "
+                 "medically cleared before 16 Dec, he can take Coetzee's overseas slot at up to about Rs 9 cr. If Rachin's price runs "
+                 "away, the fallback is Kamindu Mendis (overseas) or Shahrukh Khan (Indian, keeps an overseas slot free).", ss["Body"]))
+    vrows = [[r.player_name, r.previous_tier, r.contract_status, r.retired_or_coach, r.pak_ban, r.fitness_intent, r.verdict, r.sources]
+             for r in ver.itertuples()]
+    out.append(ptab(["Player", "Was", "Contract (17 Nov)", "Retired / coach", "PAK/BAN", "Fitness / intent", "Verdict", "Sources"], vrows,
+                    [18*mm, 15*mm, 25*mm, 22*mm, 11*mm, 36*mm, 21*mm, 34*mm]))
+    out.append(p("Table 6a. rr_target_verification.csv: every target re-checked on 17 Nov 2026. 'No registration evidence' means the "
+                 "player was not on the official IPL 2026 auction list (iplt20.com, 15 Dec 2025) and no 2027 registration is reported.",
+                 ss["Caption"]))
 
     out.append(p("9.4 Proposed RR playing XI for IPL 2027", ss["H2"]))
     rows = [[int(r.bat_order), r.player_name, r.status, "Yes" if r.overseas else "", r.rationale] for r in xi.itertuples()]
     out.append(ptab(["#", "Player", "Status", "OS", "Why"], rows, [8*mm, 34*mm, 30*mm, 8*mm, 102*mm]))
-    out.append(p(f"Table 7. rr_proposed_xi.csv: {int(xi.overseas.sum())} overseas (Maxwell, Ferreira, Archer, Pathirana).", ss["Caption"]))
+    out.append(p(f"Table 7. rr_proposed_xi.csv: {int(xi.overseas.sum())} overseas (Rachin Ravindra, Ferreira, Archer, Ferguson).", ss["Caption"]))
     out.append(bullet_list([
         "<b>Impact sub.</b> When chasing, bring in <b>Shubham Dubey</b> (our batter #4; 210.9 SR on 55 HP death balls) for a bowler. "
         "When defending, bring in <b>Avesh Khan</b> or <b>Brijesh Sharma</b> (score rank 22; 88% positive spells; HP economy 8.95 "
-        "vs 10.43) for a batter. Overseas cover: Burger or Topley for Archer or Pathirana, and Rachin for Maxwell.",
-        "<b>Bowling plan.</b> Powerplay: Archer 2 and Shami 2-3 with the new ball. Overs 7-15: Bishnoi 4, Jadeja 4 and Maxwell 1-2 "
-        "(this targets RR's overs 7-11 economy of 9.71). Death: Pathirana 3, Archer 2, Shami 1. Bishnoi stays out of the death "
-        "(HP death economy 11.33 in our data).",
-        "<b>Batting.</b> Jaiswal and Sooryavanshi open, Jurel and Parag hold the middle, and Maxwell, Ferreira and Jadeja finish, "
-        "with Dubey as the impact finisher. Retained core: 9 of the XI. Proposed buys: Maxwell and Pathirana.",
+        "vs 10.43) for a batter. Avesh takes 2 death overs (HP death economy 9.73, 24 wickets). Overseas cover: Coetzee or Burger "
+        "for Archer or Ferguson, and Kamindu Mendis for Rachin.",
+        "<b>Bowling plan.</b> Powerplay: Archer 2, Shami 2 and Ferguson 1. Overs 7-15: Bishnoi 4, Jadeja 4 and Ferguson 1, "
+        "with Rachin's left-arm spin and Parag as 6th and 7th options (this targets RR's overs 7-11 economy of 9.71). Death: "
+        "Ferguson 2, Archer 2 and Shami 2, or Avesh when he comes in as impact sub. Bishnoi stays out of the death (HP death "
+        "economy 11.33 in our data).",
+        "<b>Batting.</b> Jaiswal and Sooryavanshi open, Jurel and Parag hold the middle, Rachin bats 5 in Hetmyer's slot, and "
+        "Ferreira and Jadeja finish, with Dubey as the impact finisher. Retained core: 9 of the XI. Proposed buys: Rachin Ravindra "
+        "and Lockie Ferguson.",
     ], ss))
     out.append(p("9.5 What is unconfirmed", ss["H2"]))
     out.append(bullet_list([
-        "Registrations for Maxwell, Topley, Sikandar Raza, Adil Rashid, Hendricks, McCarthy, Humphreys, Mujeeb and Motie are "
-        "<b>unreported</b> until the 3 Dec list. Maxwell skipped IPL 2026.",
-        "Pathirana's fitness after his 2026 hamstring injury, and Ferguson's form (3 games in 2026), carry risk.",
-        "Source conflicts: TOI lists Arshin Kulkarni as both retained and released by LSG, and earlier projections had Nehal "
-        "Wadhera retained while TOI and Cricinfo list him as released. Neither player affects RR's plan.",
+        "Registrations for the uncontracted backups (Mujeeb, Hendricks) are <b>unreported</b> until the 3 Dec list. Both "
+        "registered for 2026.",
+        "Pathirana's fitness after his June 2026 hamstring surgery is unconfirmed. Ferguson (age 35) had a poor IPL 2026 "
+        "(3 games), and Avesh had knee surgery after IPL 2025.",
+        "Arshin Kulkarni: Cricinfo lists him as retained by LSG, against TOI's conflicting entry.",
+        "Earlier projections had Nehal Wadhera retained, but TOI and Cricinfo list him as released. This does not affect RR's plan.",
         "RR purse and slot figures match across TOI, CricTracker and Mint. Fees are as reported by CricTracker.",
     ], ss))
     return out

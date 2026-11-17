@@ -52,19 +52,19 @@ val = {
 def g(n, p): return ps[(ps.player_name == n) & (ps.phase == p)].iloc[0]
 rank_w = {r["player"]: r["rank"] for r in bowl}; rank_b = {r["player"]: r["rank"] for r in bat}
 b_, sa = g("Corbin Bosch", "Overs 16-20"), g("Mitchell Santner", "Overs 7-11")
-pa, av_, br = g("Matheesha Pathirana", "Overs 16-20"), g("Avesh Khan", "Overs 16-20"), g("Brijesh Sharma", "Overs 16-20")
-mx, du = g("Glenn Maxwell", "Overs 16-20"), g("Shubham Dubey", "Overs 16-20")
+fe, av_, br = g("Lockie Ferguson", "Overs 16-20"), g("Avesh Khan", "Overs 16-20"), g("Brijesh Sharma", "Overs 16-20")
+co, rc, du = g("Gerald Coetzee", "Overs 16-20"), g("Rachin Ravindra", "Overs 16-20"), g("Shubham Dubey", "Overs 16-20")
 fit = [
     {"need": "An Indian death-overs bowler (Deshpande and Kuldeep Sen released; our pick Mohit Sharma retired)",
      "pick": "Avesh Khan (released by LSG) / Brijesh Sharma (retained by RR)",
      "stat": f"Death overs under pressure: Avesh {int(av_.hp_balls)} balls, economy {av_.hp_econ:.2f}, {int(av_.hp_wkts)} wickets; Brijesh {int(br.hp_balls)} balls at {br.hp_econ:.2f}",
      "src": "Retention lists, TOI / CricTracker, 17 Nov 2026; Sandeep Sharma went at 11.39 in 2026 (Hindustan Times, 12 Nov 2026)"},
-    {"need": "An overseas death bowler (Milne and Maphaka released)", "pick": "Matheesha Pathirana (released by KKR)",
-     "stat": f"Death overs under pressure: {int(pa.hp_balls)} balls, economy {pa.hp_econ:.2f}, {int(pa.hp_wkts)} wickets. Our #1 Bosch ({int(b_.hp_balls)} balls at {b_.hp_econ:.2f}) was retained by MI. Flag: hamstring injury in 2026.",
-     "src": "TOI 17 Nov 2026; Cricbuzz (injury)"},
-    {"need": "An overseas finisher (Hetmyer released, Curran traded)", "pick": "Glenn Maxwell (if he registers) / Rachin Ravindra (released by KKR)",
-     "stat": f"Maxwell: pressure SR 174.8 vs 155.5 on 302 HP balls; death overs SR {mx.hp_sr:.1f} on {int(mx.hp_balls)} balls. His registration is unconfirmed.",
-     "src": "TOI / CricTracker 17 Nov 2026; Al Jazeera 2 Dec 2025 (skipped IPL 2026)"},
+    {"need": "An overseas death bowler (Milne and Maphaka released)", "pick": "Lockie Ferguson (released by PBKS) / Gerald Coetzee (released by SRH)",
+     "stat": f"Death overs under pressure: Ferguson {int(fe.hp_balls)} balls, economy {fe.hp_econ:.2f}, {int(fe.hp_wkts)} wickets; Coetzee {int(co.hp_balls)} balls at {co.hp_econ:.2f}, {int(co.hp_wkts)} wickets. Our #1 Bosch was retained by MI. Pathirana is a backup only, pending medical clearance after his June 2026 hamstring surgery.",
+     "src": "Cricinfo 17 Nov 2026; Cricbuzz 17 Nov 2026"},
+    {"need": "An overseas middle-order bat (Hetmyer released, Curran traded)", "pick": "Rachin Ravindra (released by KKR)",
+     "stat": f"Pressure SR 164.1 vs 135.5 on 145 HP balls (batter score rank 18); death overs SR {rc.hp_sr:.1f} on {int(rc.hp_balls)} balls; bowls left-arm spin. Glenn Maxwell was removed because he is not available for IPL 2027.",
+     "src": "Cricinfo / Sportstar 17 Nov 2026; ICC (fitness) Nov 2026"},
     {"need": "Middle-overs control (RR economy in overs 7-11 was 9.71, second-worst)", "pick": "Already covered: Bishnoi, Jadeja, Siddharth (traded in)",
      "stat": f"Our #2 Santner (overs 7-11: {int(sa.hp_balls)} balls at {sa.hp_econ:.2f}) was retained by MI, so spin is a backup buy only (Mujeeb, Adil Rashid).",
      "src": "Hindustan Times, 12 Nov 2026; The Hindu, 25 May 2026"},
@@ -73,12 +73,14 @@ fit = [
      "src": "Hindustan Times, 12 Nov 2026; Sports Yaari, 31 May 2026"},
 ]
 R = json.load(open(ROOT / "retention" / "retention_2027.json"))
-sq = pd.read_csv(OUT / "rr_retained_squad.csv"); tg = pd.read_csv(OUT / "rr_auction_targets.csv"); xi = pd.read_csv(OUT / "rr_proposed_xi.csv")
+ver = pd.read_csv(OUT / "rr_target_verification.csv"); sq = pd.read_csv(OUT / "rr_retained_squad.csv"); tg = pd.read_csv(OUT / "rr_auction_targets.csv"); xi = pd.read_csv(OUT / "rr_proposed_xi.csv")
 auction = {"rr": R["rr"], "auction": R["auction"], "purses": R["purses_cr"], "src": R["source_note"],
            "squad": [{"player": r.player_name, "role": r.role, "os": bool(r.overseas), "fee": None if pd.isna(r.fee_cr) else float(r.fee_cr)} for r in sq.itertuples()],
            "targets": [{"tier": r.tier, "player": r.player_name, "role": r.role, "os": bool(r.overseas), "status": r.status_17nov,
                         "ev": r.pressure_evidence, "band": r.price_band_cr_estimate, "flag": r.flag, "need": r.rr_need} for r in tg.itertuples()],
            "xi": [{"n": int(r.bat_order), "player": r.player_name, "status": r.status, "os": bool(r.overseas), "why": r.rationale} for r in xi.itertuples()],
+           "verify": [{"player": r.player_name, "was": r.previous_tier, "contract": r.contract_status, "retired": r.retired_or_coach,
+                       "pakban": r.pak_ban, "fit": r.fitness_intent, "verdict": r.verdict, "src": r.sources} for r in ver.itertuples()],
            "n_ret": int(sum(x["status"].startswith("RETAINED") for x in bat + bowl)),
            "n_rr": int(sum(x["status"].startswith("ALREADY RR") for x in bat + bowl)),
            "n_pool": int(sum(x["status"].startswith("NOT IN ANY") for x in bat + bowl))}

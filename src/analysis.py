@@ -1159,10 +1159,12 @@ def main():
     print(val["overall"].round(2))
     from validation import phase_split
     extra_bat = ["Glenn Maxwell", "Rachin Ravindra", "Sikandar Raza", "Donovan Ferreira", "Riyan Parag",
-                 "Dhruv Jurel", "Yashasvi Jaiswal", "Ravindra Jadeja", "Nitish Rana", "Mark Chapman"]
+                 "Dhruv Jurel", "Yashasvi Jaiswal", "Ravindra Jadeja", "Nitish Rana", "Mark Chapman",
+                 "Kamindu Mendis", "M Shahrukh Khan", "Mitchell Owen", "Shimron Hetmyer"]
     extra_bowl = ["Matheesha Pathirana", "Lockie Ferguson", "Reece Topley", "Sikandar Raza", "Avesh Khan",
                   "Akash Madhwal", "Jofra Archer", "Mohammed Shami", "Ravi Bishnoi", "Ravindra Jadeja",
-                  "Brijesh Sharma", "Sandeep Sharma", "Nandre Burger", "Glenn Maxwell", "Adil Rashid"]
+                  "Brijesh Sharma", "Sandeep Sharma", "Nandre Burger", "Glenn Maxwell", "Adil Rashid",
+                  "Zakary Foulkes", "Gerald Coetzee", "Umran Malik", "Deepak Chahar", "Rachin Ravindra"]
     phase_split(bbb, bat_e.head(10)["player_name"].tolist() + extra_bat,
                 bowl_e.head(10)["player_name"].tolist() + extra_bowl, OUT)
 

@@ -15,11 +15,14 @@ phase = pd.read_csv(OUT / "rr_fit_phase_stats.csv")
 # data-pack name -> name used in news retention lists
 ALIASES = {"Namboori Tilak Varma": "Tilak Varma", "Lokesh Rahul": "KL Rahul", "Rasikh Salam": "Rasikh Dar",
            "Vyshak Kumar": "Vyshak Vijaykumar", "Allah Ghazanfar": "AM Ghazanfar", "Zakary Foulkes": "Zak Foulkes",
-           "William Jacks": "Will Jacks", "Nitish Reddy": "Nitish Kumar Reddy", "Patrick Cummins": "Pat Cummins"}
+           "William Jacks": "Will Jacks", "Nitish Reddy": "Nitish Kumar Reddy", "Patrick Cummins": "Pat Cummins",
+           "M Shahrukh Khan": "Shahrukh Khan"}
 # retired / not playing IPL 2027 (never recommend)
 UNAVAILABLE = {"Mohit Sharma": "retired 3 Dec 2025", "Tim Southee": "KKR coach", "Ambati Rayudu": "retired",
                "Dinesh Karthik": "retired", "Ajinkya Rahane": "released; reported as retired (Sportstar 17 Nov 2026)",
-               "Mitchell Starc": "released; opted out", "Travis Head": "released; opted out"}
+               "Mitchell Starc": "released; opted out", "Travis Head": "released; opted out",
+               "Glenn Maxwell": "not available for IPL 2027 (see rr_target_verification.csv)",
+               "Jacob Bethell": "released; will not take part in IPL 2027 (knee)"}
 OS_RR = {"Jofra Archer", "Nandre Burger", "Dasun Shanaka", "Donovan Ferreira", "Lhuan-dre Pretorius"}
 RR_PRICE = {"Yashasvi Jaiswal": 18, "Dhruv Jurel": 14, "Riyan Parag": 14, "Ravindra Jadeja": 14, "Jofra Archer": 12.5,
             "Mohammed Shami": 8, "Ravi Bishnoi": 7.2, "Sandeep Sharma": 4, "Nandre Burger": 3.5, "Dasun Shanaka": 2,
@@ -82,20 +85,22 @@ def status(n):
         if nm in l: return f"RELEASED by {t} (17 Nov 2026)"
     return "UNCONTRACTED - must register by 23 Nov"
 
+# Re-verified 17 Nov 2026 (after Venu's correction on Maxwell). Released players are preferred over
+# uncontracted players whose 2027 registration is unknown.
 T = [  # tier, player, role, overseas, need, use, price band (rough estimate), extra flag
- ("1 Must-buy", "Matheesha Pathirana", "Death pace (sling)", True, "Overseas death bowler (Milne, Maphaka released; RR death econ problem)", "bowl", "7-12", "Hamstring injury in 2026; had cost Rs 18 cr (Cricbuzz). Fitness check before bidding."),
- ("1 Must-buy", "Glenn Maxwell", "Finisher + off-spin", True, "Overseas finisher to replace Hetmyer; 6th bowling option", "bat", "2-5", "Skipped IPL 2026; 2027 registration UNCONFIRMED - fall back to Rachin Ravindra/Sikandar Raza."),
- ("1 Must-buy", "Avesh Khan", "Indian seam / death", False, "Indian death-overs volume (Deshpande, Kuldeep Sen released; Mohit retired)", "bowl", "2-5", "Reliable volume rather than elite: HP economy roughly equal to his normal."),
- ("2 Value", "Reece Topley", "Left-arm pace", True, "Overseas new-ball/death left-armer; cover for Archer", "bowl", "1-2.5", "Uncontracted in IPL 2026; injury history. Must register."),
- ("2 Value", "Rachin Ravindra", "Top/middle-order bat + left-arm spin", True, "Alternative overseas bat if Maxwell absent", "bat", "2-5", "Released by KKR."),
- ("2 Value", "Sikandar Raza", "Two-way all-rounder", True, "Overseas all-rounder who bowls tight middle overs", "both", "1-2.5", "Age 40; short-term buy."),
- ("2 Value", "Akash Madhwal", "Indian death pace", False, "Cheap Indian death option", "bowl", "0.3-1.5", "Below our eligibility (6 HP spells) - small sample."),
+ ("1 Must-buy", "Rachin Ravindra", "Top/middle-order bat + left-arm spin", True, "Overseas middle-order bat replacing Hetmyer; 6th bowling option", "bat", "2-5", "Released by KKR (bought for Rs 2 cr in 2026). Fit: back from shoulder injury for NZ Tests from 19 Nov 2026 (ICC)."),
+ ("1 Must-buy", "Lockie Ferguson", "Express pace", True, "Overseas death / enforcer pace (Milne, Maphaka released)", "bowl", "2-5", "Released by PBKS. Fit: confirmed BBL 2026-27 availability with Sydney Thunder. Age 35; went at 12.8 rpo in 3 IPL 2026 games."),
+ ("1 Must-buy", "Avesh Khan", "Indian seam / death", False, "Indian death-overs volume (Deshpande, Kuldeep Sen released; Mohit retired)", "bowl", "3-7", "Released by LSG (Rs 9.75 cr). Played 7 IPL 2026 games after knee surgery. Reliable volume, not elite."),
+ ("2 Value", "Gerald Coetzee", "Pace (death)", True, "Third overseas slot: death-overs pace", "bowl", "1-3", "Released by SRH (2026 injury replacement). Reported fit (SA20, Sep 2026)."),
  ("2 Value", "Nitish Rana", "Indian middle-order bat (LH)", False, "Indian middle-order depth / impact bat", "bat", "1-3", "Released by DC."),
- ("3 Backup", "Lockie Ferguson", "Express pace", True, "Fallback if Pathirana price too high", "bowl", "2-5", "Released by PBKS after 3 games in 2026 (Moneycontrol 17 Nov 2026)."),
- ("3 Backup", "Barry McCarthy", "Seam (our bowler #3)", True, "Cheap overseas seam depth", "bowl", "0.3-1", "Never played IPL; must register."),
- ("3 Backup", "Mujeeb Ur Rahman", "Off-spin (our bowler #5)", True, "Powerplay spin if Bishnoi/Jadeja injured", "bowl", "0.75-2", "Uncontracted; must register. RR already has Bishnoi, Jadeja, Siddharth."),
- ("3 Backup", "Reeza Hendricks", "Opener (our batter #1)", True, "Top-order cover only; RR openers settled", "bat", "0.75-2", "Never played IPL; must register."),
- ("3 Backup", "Adil Rashid", "Leg-spin", True, "Experienced wrist-spin cover", "bowl", "1-2", "Only 4 IPL HP balls in data."),
+ ("2 Value", "Akash Madhwal", "Indian death pace", False, "Cheap Indian seam option", "bowl", "0.3-1.5", "Released by CSK. Below our eligibility (6 HP spells), so the sample is small."),
+ ("2 Value", "M Shahrukh Khan", "Indian finisher", False, "Indian lower-order hitter (Hetmyer role)", "bat", "0.75-2.5", "Released by GT. Only 20% positive pressure innings: high-variance."),
+ ("3 Backup", "Matheesha Pathirana", "Death pace (sling)", True, "Overseas death specialist IF medically cleared", "bowl", "4-9", "Released by KKR. Hamstring surgery June 2026; not in any SL squad Oct-Nov 2026; no return timeline. Bid only with medical clearance."),
+ ("3 Backup", "Zakary Foulkes", "Seam all-rounder", True, "Overseas seam all-rounder (Curran gone)", "bowl", "0.75-2", "Released by CSK. HP death economy 11.10 on 40 balls: middle overs only."),
+ ("3 Backup", "Kamindu Mendis", "Bat + two-way spin", True, "Overseas middle-order alternative to Rachin", "bat", "0.75-2", "Released by SRH."),
+ ("3 Backup", "Umran Malik", "Indian express pace", False, "Indian pace depth", "bowl", "0.3-1.5", "Released by KKR. Economy 10.06 under pressure: expensive."),
+ ("3 Backup", "Mujeeb Ur Rahman", "Off-spin (our bowler #5)", True, "Spin cover only", "bowl", "0.75-2", "Uncontracted. Registered for 2026 and went unsold (Rs 2 cr base). 2027 registration unconfirmed until 3 Dec."),
+ ("3 Backup", "Reeza Hendricks", "Opener (our batter #1)", True, "Top-order cover only", "bat", "0.75-2", "Uncontracted. On the official 2026 auction list (Rs 1 cr base). 2027 registration unconfirmed until 3 Dec."),
 ]
 rows = []
 for tier, n, role, os_, need, use, band, flag in T:
@@ -117,14 +122,42 @@ XI = [
  (2, "Vaibhav Sooryavanshi", "Retained", False, "Opener; highest-tempo option (small HP sample: 40 balls)"),
  (3, "Dhruv Jurel", "Retained", False, "Wicket-keeper; 162 death-over HP balls at SR 170.4"),
  (4, "Riyan Parag", "Retained", False, "Captain; anchors overs 7-15, part-time spin"),
- (5, "Glenn Maxwell", "Proposed buy", True, "Overseas finisher replacing Hetmyer; HP SR 174.8 (alt: Rachin Ravindra)"),
- (6, "Donovan Ferreira", "Retained", True, "Second finisher; death-overs SR 214.9"),
+ (5, "Rachin Ravindra", "Proposed buy", True, "Replaces Hetmyer; HP SR 164.1 vs 135.5 (our batter score rank 18), left-arm spin as 6th option"),
+ (6, "Donovan Ferreira", "Retained", True, "Finisher; death-overs SR 214.9"),
  (7, "Ravindra Jadeja", "Retained", False, "Spin all-rounder; 4 overs through the middle"),
- (8, "Jofra Archer", "Retained", True, "New ball + 1-2 death overs"),
+ (8, "Jofra Archer", "Retained", True, "New ball + 2 death overs (HP death econ 9.34)"),
  (9, "Ravi Bishnoi", "Retained", False, "Middle-overs wicket-taker: 52 HP wkts on 919 HP balls"),
  (10, "Mohammed Shami", "Retained (traded in)", False, "New-ball seam, replaces Deshpande"),
- (11, "Matheesha Pathirana", "Proposed buy", True, "Death specialist: 24 death-over HP wkts (alt: Ferguson / Topley)"),
+ (11, "Lockie Ferguson", "Proposed buy", True, "Overseas enforcer: 22 HP wkts, 77% positive spells (alt: Coetzee)"),
 ]
+VERIFY = [  # player, previous tier, overseas, contract status 17 Nov 2026, retired/coach, PAK/BAN, fitness / intent, verdict, sources
+ ("Glenn Maxwell", "1 Must-buy (17 Nov v1)", True, "Uncontracted (opted out of the IPL 2026 auction; released by PBKS Nov 2025)", "Retired from international, first-class and List A cricket on 2 Nov 2026; still plays T20 leagues", "No",
+  "Signed a multi-year Hyderabad Kingsmen (PSL) deal extending beyond PSL 11; the PSL runs in the IPL window. Knee rehab for BBL. No IPL 2027 registration reported", "FAIL - removed",
+  "Cricinfo 2 Nov 2026; cricket.com.au 2 Nov 2026; Business Recorder 19 Feb 2026; Sixty.pk 25 Feb 2026; Hindustan Times 27 Apr 2026; thecricpanda (IPL 2027 'not confirmed')"),
+ ("Sikandar Raza", "2 Value (v1)", True, "Uncontracted; not on the official IPL 2026 auction list", "No", "No (Zimbabwe)",
+  "Played PSL 11 for Lahore Qalandars in the IPL window; reported two-year PSL cycle. Age 40", "FAIL - removed (no IPL registration evidence, PSL clash)", "thecricscope; PCB PSL retention release; iplt20.com 2026 auction list"),
+ ("Reece Topley", "2 Value (v1)", True, "Uncontracted; not on the official IPL 2026 auction list (15 Dec 2025)", "No", "No",
+  "Returned to county cricket in Apr 2026; long injury history. No IPL registration in 2026 and none reported for 2027", "FAIL - removed (no registration evidence)", "iplt20.com 2026 auction list; Wisden Apr 2026"),
+ ("Adil Rashid", "3 Backup (v1)", True, "Uncontracted; not on the official IPL 2026 auction list", "No", "No",
+  "No IPL since 2023 (4 IPL HP balls in data); no 2027 registration reported", "FAIL - removed (no registration evidence)", "iplt20.com 2026 auction list; Guardian 16 Nov 2026"),
+ ("Barry McCarthy", "3 Backup (v1)", True, "Never in the IPL; not on the official 2026 auction list", "No", "No (Ireland)", "No IPL registration reported", "FAIL - removed (no registration evidence)", "iplt20.com 2026 auction list"),
+ ("Matheesha Pathirana", "1 Must-buy (v1)", True, "RELEASED by KKR, 17 Nov 2026", "No", "No (Sri Lanka)",
+  "Hamstring surgery June 2026, rehab in France with no return timeline; not in SL squads Oct-Nov 2026; 1 IPL 2026 game (8 balls)", "CONDITIONAL - moved to backup (medical clearance needed)", "Cricbuzz 17 Nov 2026; CNBC-TV18 17 Nov 2026; CricketAddictor Jun 2026"),
+ ("Avesh Khan", "1 Must-buy", False, "RELEASED by LSG, 17 Nov 2026", "No", "No", "Knee surgery after IPL 2025, then 7 IPL 2026 games", "PASS", "Cricinfo 17 Nov 2026; Tribune 17 Nov 2026; Rediff 25 Jun 2026"),
+ ("Rachin Ravindra", "2 Value -> 1 Must-buy", True, "RELEASED by KKR, 17 Nov 2026", "No", "No (New Zealand)", "Recovered from a dislocated shoulder; named for NZ v India Tests from 19 Nov 2026", "PASS", "Cricinfo 17 Nov 2026; Sportstar 17 Nov 2026; ICC Nov 2026"),
+ ("Lockie Ferguson", "3 Backup -> 1 Must-buy", True, "RELEASED by PBKS, 17 Nov 2026", "No", "No (New Zealand)", "Confirmed BBL 2026-27 availability (Sydney Thunder); age 35; poor IPL 2026 (3 games)", "PASS (form flag)", "Cricinfo 17 Nov 2026; cricket.com.au; Moneycontrol 17 Nov 2026"),
+ ("Akash Madhwal", "2 Value", False, "RELEASED by CSK, 17 Nov 2026", "No", "No", "Unsold in the 2026 auction, later with CSK", "PASS (small sample)", "Cricinfo 17 Nov 2026; Wisden 16 Dec 2025"),
+ ("Nitish Rana", "2 Value", False, "RELEASED by DC, 17 Nov 2026", "No", "No", "No reported issue", "PASS", "Cricinfo 17 Nov 2026"),
+ ("Mujeeb Ur Rahman", "3 Backup", True, "Uncontracted; registered for 2026 and went unsold (Rs 2 cr base)", "No", "No (Afghanistan)", "2027 registration unconfirmed until 3 Dec", "PASS (registration risk)", "iplt20.com 2026 auction list; Wisden 16 Dec 2025"),
+ ("Reeza Hendricks", "3 Backup", True, "Uncontracted; on the official 2026 auction list (Rs 1 cr base)", "No", "No (South Africa)", "2027 registration unconfirmed until 3 Dec", "PASS (registration risk)", "iplt20.com 2026 auction list"),
+ ("Gerald Coetzee", "new - 2 Value", True, "RELEASED by SRH, 17 Nov 2026", "No", "No (South Africa)", "2026 injury replacement at SRH; reported fit Sep 2026", "PASS", "Cricinfo 17 Nov 2026; SA20 Sep 2026"),
+ ("Zakary Foulkes", "new - 3 Backup", True, "RELEASED by CSK, 17 Nov 2026", "No", "No (New Zealand)", "No reported issue", "PASS", "Cricinfo 17 Nov 2026; Sportstar 17 Nov 2026"),
+ ("M Shahrukh Khan", "new - 2 Value", False, "RELEASED by GT, 17 Nov 2026", "No", "No", "No reported issue", "PASS", "Cricinfo 17 Nov 2026"),
+ ("Kamindu Mendis", "new - 3 Backup", True, "RELEASED by SRH, 17 Nov 2026", "No", "No (Sri Lanka)", "No reported issue", "PASS", "Cricinfo 17 Nov 2026"),
+ ("Umran Malik", "new - 3 Backup", False, "RELEASED by KKR, 17 Nov 2026", "No", "No", "No reported issue", "PASS (expensive under pressure)", "Cricinfo 17 Nov 2026"),
+]
+pd.DataFrame(VERIFY, columns=["player_name", "previous_tier", "overseas", "contract_status", "retired_or_coach", "pak_ban",
+                              "fitness_intent", "verdict", "sources"]).to_csv(OUT / "rr_target_verification.csv", index=False)
 xi = pd.DataFrame(XI, columns=["bat_order", "player_name", "status", "overseas", "rationale"])
 assert xi.overseas.sum() <= 4
 xi.to_csv(OUT / "rr_proposed_xi.csv", index=False)

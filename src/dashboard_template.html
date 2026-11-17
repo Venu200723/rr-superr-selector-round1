@@ -96,14 +96,17 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 16px 40px;text-align:cen
   <div class="kpis" id="akpis"></div>
   <p class="note" id="anote"></p>
   <div class="card" style="margin-top:12px"><b>What happened to our 20 picks</b><div id="apicks"></div></div>
+  <div class="card" style="margin-top:12px;border-left:5px solid var(--pink)"><b>Correction (17 Nov 2026):</b> the first version of this update recommended Glenn Maxwell. He is <b>not available for IPL 2027</b>. He opted out of IPL 2026, signed a multi-year PSL deal with Hyderabad Kingsmen that runs in the IPL window (Business Recorder, 19 Feb 2026; Sixty.pk, 25 Feb 2026), retired from international, first-class and List A cricket on 2 Nov 2026 (Cricinfo; cricket.com.au), and has no reported IPL 2027 registration. Every target was then re-verified (table below). Sikandar Raza, Reece Topley, Adil Rashid and Barry McCarthy were removed for lack of IPL registration evidence (Raza also plays PSL), and Pathirana moved to backup pending medical clearance.</div>
   <h3 style="margin:18px 0 8px">Prioritised shortlist: available players only</h3>
   <p class="note">Price bands are our own rough estimates, not reported figures. "Uncontracted" players reach the auction only if they register by 23 Nov; the final list is published on 3 Dec.</p>
   <div class="tablewrap"><table id="tTg"></table></div>
+  <h3 style="margin:18px 0 8px">Verification of every target (17 Nov 2026)</h3>
+  <div class="tablewrap"><table id="tVer"></table></div>
   <h3 style="margin:18px 0 8px">Proposed RR playing XI for IPL 2027 (max 4 overseas)</h3>
   <div class="tablewrap"><table id="tXi"></table></div>
   <div class="card" style="margin-top:12px"><ul>
-   <li><b>Impact sub:</b> when chasing, Shubham Dubey (our batter #4; SR 210.9 on 55 high-pressure death balls). When defending, Avesh Khan or Brijesh Sharma (88% positive pressure spells). Overseas cover: Burger or Topley for Archer or Pathirana; Rachin Ravindra for Maxwell.</li>
-   <li><b>Bowling plan:</b> Powerplay: Archer 2 and Shami 2–3. Overs 7–15: Bishnoi 4, Jadeja 4 and Maxwell 1–2. Death: Pathirana 3, Archer 2 and Shami 1. Bishnoi stays out of the death (economy 11.33 on high-pressure death balls).</li>
+   <li><b>Impact sub:</b> when chasing, Shubham Dubey (our batter #4; SR 210.9 on 55 high-pressure death balls). When defending, Avesh Khan (2 death overs; 24 high-pressure death wickets) or Brijesh Sharma (88% positive pressure spells). Overseas cover: Coetzee or Burger for Archer or Ferguson; Kamindu Mendis for Rachin Ravindra.</li>
+   <li><b>Bowling plan:</b> Powerplay: Archer 2, Shami 2 and Ferguson 1. Overs 7–15: Bishnoi 4, Jadeja 4 and Ferguson 1, with Rachin and Parag as extra spin options. Death: Ferguson 2, Archer 2 and Shami 2 (or Avesh as impact sub). Bishnoi stays out of the death (economy 11.33 on high-pressure death balls).</li>
    <li><b>Retained squad (19):</b> <span id="asq"></span></li></ul></div>
 </section>
 
@@ -180,6 +183,7 @@ document.getElementById('apicks').innerHTML = `<p><b>${A.n_ret} of 20</b> are re
 document.getElementById('asq').textContent = A.squad.map(x=>x.player+(x.os?' (OS)':'')+(x.fee!=null?` ₹${x.fee} cr`:'')).join(', ');
 makeTable('tTg', A.targets.map((x,i)=>({...x,rank:i+1})), [{k:'tier',h:'Tier'},{k:'player',h:'Player',f:x=>`<b>${x.player}</b><div class="note">${x.os?'Overseas':'Indian'} · ${x.role}</div>`},
   {k:'status',h:'Status (17 Nov)',f:x=>pill(x.status)},{k:'need',h:'RR need'},{k:'ev',h:'Pressure evidence (our data)'},{k:'band',h:'Band ₹ cr*'},{k:'flag',h:'Flag'}]);
+makeTable('tVer', A.verify.map((x,i)=>({...x,rank:i+1})), [{k:'player',h:'Player',f:x=>`<b>${x.player}</b><div class="note">was: ${x.was}</div>`},{k:'contract',h:'Contract (17 Nov)'},{k:'retired',h:'Retired / coach'},{k:'pakban',h:'PAK/BAN'},{k:'fit',h:'Fitness / intent'},{k:'verdict',h:'Verdict',f:x=>`<span class="pill ${/^FAIL/.test(x.verdict)?'p-x':(/^PASS/.test(x.verdict)?'p-rr':'p-ret')}">${x.verdict}</span>`},{k:'src',h:'Sources',f:x=>`<span class="note">${x.src}</span>`}]);
 makeTable('tXi', A.xi.map(x=>({...x,rank:x.n})), [{k:'n',h:'#',num:1},{k:'player',h:'Player',f:x=>`<b>${x.player}</b>${x.os?' <span class="pill p-other">OS</span>':''}`},{k:'status',h:'Status',f:x=>`<span class="pill ${/buy/i.test(x.status)?'p-other':'p-rr'}">${x.status}</span>`},{k:'why',h:'Why'}]);
 const W=D.w, E=D.elig;
 document.getElementById('weights').innerHTML = `<li><b>Batters:</b> ${W.bat.lift} × lift over own baseline + ${W.bat.abs} × absolute pressure SR and phase-adjusted runs above expected + ${W.bat.survival} × survival (balls per dismissal) + ${W.bat.consistency} × consistency</li>
